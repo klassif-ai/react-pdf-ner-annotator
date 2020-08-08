@@ -1,0 +1,11 @@
+.token-container {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+
+  .token__text-item::after {
+    content: ' ';
+  }
+}

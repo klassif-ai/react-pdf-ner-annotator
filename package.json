@@ -8,10 +8,14 @@
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^24.9.1",
     "@types/node": "^12.12.54",
+    "@types/pdfjs-dist": "^2.1.5",
     "@types/react": "^16.9.44",
     "@types/react-dom": "^16.9.8",
+    "node-sass": "^4.14.1",
+    "pdfjs-dist": "^2.4.456",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-intersection-observer": "^8.26.2",
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   },
@@ -35,5 +39,26 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "3.8.0",
+    "@typescript-eslint/parser": "3.8.0",
+    "babel-eslint": "10.1.0",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "18.2.0",
+    "eslint-config-airbnb-typescript": "9.0.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-config-react-app": "5.2.1",
+    "eslint-import-resolver-typescript": "2.2.0",
+    "eslint-loader": "4.0.2",
+    "eslint-plugin-flowtype": "5.2.0",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-jsx-a11y": "6.3.1",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-react": "7.20.5",
+    "eslint-plugin-react-hooks": "4.0.8",
+    "prettier": "2.0.5",
+    "prettier-eslint": "11.0.0",
+    "prettier-eslint-cli": "5.0.0"
   }
 }
