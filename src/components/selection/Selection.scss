@@ -1,0 +1,17 @@
+.selection-container {
+  &.annotating-mode {
+    user-select: none;
+    cursor: crosshair;
+  }
+
+  &.text-selection-mode {
+    cursor: text;
+    opacity: 0.2;
+  }
+
+  .selection__rectangle {
+    opacity: 0.3;
+    border: 1px dashed #000;
+    position: absolute;
+  }
+}

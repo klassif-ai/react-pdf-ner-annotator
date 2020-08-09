@@ -52,3 +52,10 @@ export const calculateTextProperties = (
     left, top, fontSize, transform,
   };
 };
+
+export const calculateIndexes = (
+  lastTokenIndex: number,
+  matchLength: number
+): Array<number> => {
+  return Array(matchLength).fill(0).map((_, index) => (index + lastTokenIndex));
+};

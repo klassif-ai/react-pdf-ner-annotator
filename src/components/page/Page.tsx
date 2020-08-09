@@ -4,13 +4,29 @@ import { PDFPageProxy, PDFPageViewport, PDFPromise, TextContent } from 'pdfjs-di
 import { calculateTextProperties } from '../../helpers/pdfHelpers';
 import Token from './token/Token';
 import './Page.scss';
+import Selection from '../selection/Selection';
+import { Entity } from '../../interfaces/entity';
+import { Annotation, AnnotationParams } from '../../interfaces/annotation';
 
 interface Props {
+  pageNumber: number;
   page: PDFPromise<PDFPageProxy>|null;
   scale: number;
+  regex: RegExp;
+  annotations: Array<Annotation>;
+  addAnnotation: (annotation: AnnotationParams) => void;
+  entity?: Entity;
 }
 
-const Page = ({ page, scale }: Props) => {
+const Page = ({
+  pageNumber,
+  page,
+  scale,
+  regex,
+  annotations,
+  addAnnotation,
+  entity,
+}: Props) => {
   const [inViewRef, inView] = useInView({ threshold: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -49,6 +65,7 @@ const Page = ({ page, scale }: Props) => {
 
   const renderText = useMemo(() => {
     if (canvasRef && text && inView) {
+      let lastIndex = 0;
       return text.items.map((item) => {
         const style = text.styles[item.fontName];
         const {
@@ -63,7 +80,10 @@ const Page = ({ page, scale }: Props) => {
           context!,
         );
 
-        return (
+        const { str } = item;
+        const matches = str.match(regex)!;
+
+        const token = (
           <Token
             key={`${left}-${top}`}
             left={left}
@@ -71,13 +91,18 @@ const Page = ({ page, scale }: Props) => {
             transform={transform}
             fontSize={fontSize}
             fontFamily={style.fontFamily}
-            tokens={item.str.split(' ')}
+            tokens={matches}
+            lastIndex={lastIndex}
           />
         );
+
+        lastIndex += matches.filter((t) => t !== ' ').length;
+
+        return token;
       });
     }
     return null;
-  }, [text, context, pageViewport, canvasRef, inView]);
+  }, [regex, text, context, pageViewport, canvasRef, inView]);
 
   return (
     <div className="page" ref={inViewRef}>
@@ -94,12 +119,15 @@ const Page = ({ page, scale }: Props) => {
             style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}
           />
         </div>
-        <div
+        <Selection
+          pageNumber={pageNumber}
           className="page__text-layer-container"
           style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}
+          entity={entity}
+          addAnnotation={addAnnotation}
         >
           { renderText }
-        </div>
+        </Selection>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
-
-const generateRandomId = (): string => Math.random().toString(36).substring(10);
+import { generateRandomId } from '../helpers/generalHelpers';
 
 const useAnnotations = () => {
   const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
@@ -12,7 +11,7 @@ const useAnnotations = () => {
 
   const addAnnotation = (annotation: AnnotationParams) => {
     const newAnnotation: Annotation = {
-      id: generateRandomId(),
+      id: generateRandomId(10),
       ...annotation
     };
     const newAnnotations = [...annotations, newAnnotation];

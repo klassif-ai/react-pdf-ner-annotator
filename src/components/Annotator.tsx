@@ -4,6 +4,7 @@ import useAnnotations from '../hooks/useAnnotations';
 import Page from './page/Page';
 import Error from './error/Error';
 import './Annotator.scss';
+import { Entity } from '../interfaces/entity';
 
 interface Props {
   url?: string;
@@ -12,9 +13,18 @@ interface Props {
     [key: string]: string;
   };
   scale?: number;
+  regex?: RegExp;
+  entity?: Entity;
 }
 
-const Annotator = ({ url, data, httpHeaders, scale = 1.5 }: Props) => {
+const Annotator = ({
+  url,
+  data,
+  httpHeaders,
+  scale = 1.5,
+  regex = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
+  entity,
+}: Props) => {
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders });
   const { annotations, getAnnotationsForPage, addAnnotation, removeAnnotation } = useAnnotations();
 
@@ -34,13 +44,23 @@ const Annotator = ({ url, data, httpHeaders, scale = 1.5 }: Props) => {
     return (
       Array(pages).fill(0).map((_, index) => {
         const key = `pdf-page-${index}`;
-        const page = fetchPage(index + 1);
+        const pageNumber = index + 1;
+        const page = fetchPage(pageNumber);
         return (
-          <Page page={page} scale={scale} key={key} />
+          <Page
+            page={page}
+            scale={scale}
+            key={key}
+            regex={regex}
+            pageNumber={pageNumber}
+            annotations={getAnnotationsForPage(pageNumber)}
+            addAnnotation={addAnnotation}
+            entity={entity}
+          />
         );
       })
     );
-  }, [url, data, pages, error, scale, fetchPage]);
+  }, [url, data, pages, error, scale, regex, entity, fetchPage, getAnnotationsForPage, addAnnotation]);
 
   return (
     <div className="annotator-container">
