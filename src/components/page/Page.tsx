@@ -84,6 +84,7 @@ const Page = ({
         if (annotation) {
           return (
             <Mark
+              dataI={dataI}
               token={token}
               annotation={annotation}
               removeAnnotation={removeAnnotation}

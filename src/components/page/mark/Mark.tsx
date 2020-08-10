@@ -5,23 +5,25 @@ import './Mark.scss';
 
 
 interface Props {
+  dataI: number;
   token: string;
   annotation: Annotation;
   removeAnnotation: (id: string) => void;
 }
 
-const Mark = ({ token, annotation, removeAnnotation }: Props)  => {
+const Mark = ({ dataI, token, annotation, removeAnnotation }: Props)  => {
+  const isFirst = dataI === annotation.textIds[0];
+
   return (
-    <span
+    <mark
       className="mark-container"
       onClick={() => removeAnnotation(annotation.id)}
-      role="button"
       style={{
         backgroundColor: annotation.entity.color,
       }}
     >
-      { token }
-    </span>
+      <span className="mark__token">{ token }</span>
+    </mark>
   );
 };
 
