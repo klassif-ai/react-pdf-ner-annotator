@@ -31,14 +31,28 @@ const Selection = ({
   const [isDragging, setIsDragging] = useState(false);
   const [mouseCoords, setMouseCoords] = useState([0, 0]);
   const [coords, setCoords] = useState(initialCoords);
-  const [newMark, setNewMark] = useState<AnnotationParams|null>(null);
+
+  const handleKeyEvent = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case 'Escape': {
+        if (isDragging) {
+          setIsDragging(false);
+          setMouseCoords([0, 0]);
+          setCoords(initialCoords);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  };
 
   useEffect(() => {
-    if (newMark) {
-      addAnnotation(newMark);
-      setNewMark(null);
-    }
-  }, [newMark, addAnnotation]);
+    document.addEventListener('keydown', handleKeyEvent, false);
+    return () => {
+      document.removeEventListener('keydown', handleKeyEvent, false);
+    };
+  });
 
   const handleMouseDown = () => {
     if (entity) {
@@ -66,13 +80,13 @@ const Selection = ({
           const dataI = child.getAttribute('data-i');
           if (dataI) {
             markToAdd.tokens.push(child.textContent);
-            markToAdd.textIds.push(dataI);
+            markToAdd.textIds.push(parseInt(dataI, 10));
           }
         });
       });
 
       if (markToAdd.textIds.length) {
-        setNewMark(markToAdd);
+        addAnnotation(markToAdd);
       }
     }
 

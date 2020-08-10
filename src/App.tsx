@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Annotator from './components/Annotator';
 import { Entity } from './interfaces/entity';
 
@@ -12,6 +12,26 @@ const entity: Entity = {
 
 const App = () => {
   const [scale, setScale] = useState(1.5);
+
+  const handleKeyEvent = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case '+':
+        setScale(scale + 0.1);
+        break;
+      case '-':
+        setScale(scale - 0.1);
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyEvent, false);
+    return () => {
+      document.removeEventListener('keydown', handleKeyEvent, false);
+    };
+  });
 
   return (
     <Annotator url={url} scale={scale} entity={entity} />

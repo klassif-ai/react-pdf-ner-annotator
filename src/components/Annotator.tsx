@@ -55,12 +55,13 @@ const Annotator = ({
             pageNumber={pageNumber}
             annotations={getAnnotationsForPage(pageNumber)}
             addAnnotation={addAnnotation}
+            removeAnnotation={removeAnnotation}
             entity={entity}
           />
         );
       })
     );
-  }, [url, data, pages, error, scale, regex, entity, fetchPage, getAnnotationsForPage, addAnnotation]);
+  }, [url, data, pages, error, scale, regex, entity, fetchPage, getAnnotationsForPage, addAnnotation, removeAnnotation]);
 
   return (
     <div className="annotator-container">

@@ -6,7 +6,6 @@
     padding-bottom: 40px;
   }
 
-
   .page__container {
     position: relative;
 
@@ -22,6 +21,14 @@
       bottom: 0;
       overflow: hidden;
       line-height: 1.0;
+
+      .token-container {
+        color: transparent;
+        position: absolute;
+        white-space: pre;
+        cursor: inherit;
+        transform-origin: 0 0;
+      }
     }
   }
 }

@@ -1,4 +1,10 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport, PDFPromise, TextContent } from 'pdfjs-dist';
 import { calculateTextProperties } from '../../helpers/pdfHelpers';
@@ -7,6 +13,8 @@ import './Page.scss';
 import Selection from '../selection/Selection';
 import { Entity } from '../../interfaces/entity';
 import { Annotation, AnnotationParams } from '../../interfaces/annotation';
+import { generateRandomId } from '../../helpers/generalHelpers';
+import Mark from './mark/Mark';
 
 interface Props {
   pageNumber: number;
@@ -15,6 +23,7 @@ interface Props {
   regex: RegExp;
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
+  removeAnnotation: (id: string) => void;
   entity?: Entity;
 }
 
@@ -25,6 +34,7 @@ const Page = ({
   regex,
   annotations,
   addAnnotation,
+  removeAnnotation,
   entity,
 }: Props) => {
   const [inViewRef, inView] = useInView({ threshold: 0 });
@@ -63,6 +73,32 @@ const Page = ({
     }
   }, [page, scale, canvasRef, context]);
 
+  const renderTokens = useCallback((tokens: Array<string>, lastIndex: number) => {
+    let index = 0;
+    return tokens.map((token) => {
+      if (token !== ' ') {
+        index += 1;
+        const dataI = lastIndex + index;
+        const annotation = annotations.find((a) => a.textIds.includes(dataI));
+
+        if (annotation) {
+          return (
+            <Mark
+              token={token}
+              annotation={annotation}
+              removeAnnotation={removeAnnotation}
+              key={generateRandomId(7)}
+            />
+          );
+        }
+
+        return <Token token={token} dataI={dataI} key={generateRandomId(7)} />;
+      }
+
+      return <Token token={token} key={generateRandomId(7)} />;
+    });
+  }, [annotations, removeAnnotation]);
+
   const renderText = useMemo(() => {
     if (canvasRef && text && inView) {
       let lastIndex = 0;
@@ -84,25 +120,29 @@ const Page = ({
         const matches = str.match(regex)!;
 
         const token = (
-          <Token
-            key={`${left}-${top}`}
-            left={left}
-            top={top}
-            transform={transform}
-            fontSize={fontSize}
-            fontFamily={style.fontFamily}
-            tokens={matches}
-            lastIndex={lastIndex}
-          />
+          <span
+            className="token-container"
+            style={{
+              left: `${left}px`,
+              top: `${top}px`,
+              fontSize: `${fontSize}px`,
+              fontFamily: `${style.fontFamily}`,
+              transform: `scaleX(${transform})`,
+            }}
+            key={generateRandomId(7)}
+          >
+            { renderTokens(matches, lastIndex) }
+          </span>
         );
 
         lastIndex += matches.filter((t) => t !== ' ').length;
+        // console.log(lastIndex);
 
         return token;
       });
     }
     return null;
-  }, [regex, text, context, pageViewport, canvasRef, inView]);
+  }, [regex, text, context, pageViewport, canvasRef, inView, renderTokens]);
 
   return (
     <div className="page" ref={inViewRef}>
