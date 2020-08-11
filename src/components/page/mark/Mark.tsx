@@ -5,15 +5,12 @@ import './Mark.scss';
 
 
 interface Props {
-  dataI: number;
   token: string;
   annotation: Annotation;
   removeAnnotation: (id: string) => void;
 }
 
-const Mark = ({ dataI, token, annotation, removeAnnotation }: Props)  => {
-  const isFirst = dataI === annotation.textIds[0];
-
+const Mark = ({ token, annotation, removeAnnotation }: Props)  => {
   return (
     <mark
       className="mark-container"

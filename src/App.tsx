@@ -10,6 +10,8 @@ const entity: Entity = {
   color: '#81C784',
 };
 
+const defaultAnnotations = [{ 'id':'z41juzvba6', 'page':1, 'tokens':['Trace-based', 'Just-in-Time'], 'textIds':[1, 2], 'entity':{ 'id':1, 'name':'Test', 'color':'#81C784' } }];
+
 const App = () => {
   const [scale, setScale] = useState(1.5);
 
@@ -34,7 +36,7 @@ const App = () => {
   });
 
   return (
-    <Annotator url={url} scale={scale} entity={entity} />
+    <Annotator url={url} scale={scale} entity={entity} defaultAnnotations={defaultAnnotations} />
   );
 };
 

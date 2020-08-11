@@ -8,13 +8,13 @@ import React, {
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport, PDFPromise, TextContent } from 'pdfjs-dist';
 import { calculateTextProperties } from '../../helpers/pdfHelpers';
-import Token from './token/Token';
-import './Page.scss';
-import Selection from '../selection/Selection';
+import { generateRandomId } from '../../helpers/generalHelpers';
 import { Entity } from '../../interfaces/entity';
 import { Annotation, AnnotationParams } from '../../interfaces/annotation';
-import { generateRandomId } from '../../helpers/generalHelpers';
 import Mark from './mark/Mark';
+import Token from './token/Token';
+import Selection from '../selection/Selection';
+import './Page.scss';
 
 interface Props {
   pageNumber: number;
@@ -75,6 +75,7 @@ const Page = ({
 
   const renderTokens = useCallback((tokens: Array<string>, lastIndex: number) => {
     let index = 0;
+    let markAsSpace: Annotation | null = null;
     return tokens.map((token) => {
       if (token !== ' ') {
         index += 1;
@@ -82,9 +83,11 @@ const Page = ({
         const annotation = annotations.find((a) => a.textIds.includes(dataI));
 
         if (annotation) {
+          if (annotation.textIds[annotation.textIds.length - 1] !== dataI) {
+            markAsSpace = annotation;
+          }
           return (
             <Mark
-              dataI={dataI}
               token={token}
               annotation={annotation}
               removeAnnotation={removeAnnotation}
@@ -96,7 +99,23 @@ const Page = ({
         return <Token token={token} dataI={dataI} key={generateRandomId(7)} />;
       }
 
-      return <Token token={token} key={generateRandomId(7)} />;
+
+      let space;
+      if (markAsSpace) {
+        space = (
+          <Mark
+            token={token}
+            annotation={markAsSpace}
+            removeAnnotation={removeAnnotation}
+            key={generateRandomId(7)}
+          />
+        );
+        markAsSpace = null;
+      } else {
+        space = <Token token={token} key={generateRandomId(7)} />;
+      }
+
+      return space;
     });
   }, [annotations, removeAnnotation]);
 

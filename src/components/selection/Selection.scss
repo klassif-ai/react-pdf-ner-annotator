@@ -6,7 +6,15 @@
 
   &.text-selection-mode {
     cursor: text;
-    opacity: 0.2;
+
+    &::-moz-selection {
+      background: rgba(0, 0, 255, 0.2);
+      color: transparent;
+    }
+    &::selection {
+      background: rgba(0, 0, 255, 0.2);
+      color: transparent;
+    }
   }
 
   .selection__rectangle {

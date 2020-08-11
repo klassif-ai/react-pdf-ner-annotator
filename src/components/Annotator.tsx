@@ -5,6 +5,7 @@ import Page from './page/Page';
 import Error from './error/Error';
 import './Annotator.scss';
 import { Entity } from '../interfaces/entity';
+import { Annotation } from '../interfaces/annotation';
 
 interface Props {
   url?: string;
@@ -15,6 +16,7 @@ interface Props {
   scale?: number;
   regex?: RegExp;
   entity?: Entity;
+  defaultAnnotations?: Array<Annotation>,
 }
 
 const Annotator = ({
@@ -24,9 +26,15 @@ const Annotator = ({
   scale = 1.5,
   regex = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
   entity,
+  defaultAnnotations = [],
 }: Props) => {
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders });
-  const { annotations, getAnnotationsForPage, addAnnotation, removeAnnotation } = useAnnotations();
+  const {
+    annotations,
+    getAnnotationsForPage,
+    addAnnotation,
+    removeAnnotation
+  } = useAnnotations({ defaultAnnotations });
 
   const renderPages = useMemo(() => {
     if (!url && !data) {

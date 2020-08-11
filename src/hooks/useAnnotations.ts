@@ -2,8 +2,12 @@ import { useState } from 'react';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 import { generateRandomId } from '../helpers/generalHelpers';
 
-const useAnnotations = () => {
-  const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
+interface Props {
+  defaultAnnotations: Array<Annotation>;
+}
+
+const useAnnotations = ({ defaultAnnotations }: Props) => {
+  const [annotations, setAnnotations] = useState<Array<Annotation>>(defaultAnnotations);
 
   const getAnnotationsForPage = (page: number): Array<Annotation> => {
     return annotations.filter((annotation: Annotation) => annotation.page === page);
