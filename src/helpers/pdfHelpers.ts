@@ -1,6 +1,7 @@
 // @ts-ignore
 import * as PdfJs from 'pdfjs-dist/build/pdf';
 import { TextContentItem } from 'pdfjs-dist';
+import { Rectangle } from 'tesseract.js';
 
 export const calculateTextProperties = (
   textItem: TextContentItem,
@@ -53,9 +54,11 @@ export const calculateTextProperties = (
   };
 };
 
-export const calculateIndexes = (
-  lastTokenIndex: number,
-  matchLength: number
-): Array<number> => {
-  return Array(matchLength).fill(0).map((_, index) => (index + lastTokenIndex));
+export const calculateRectangleProperties = (boundingBox: any): Rectangle => {
+  const { x0, x1, y0, y1 } = boundingBox;
+
+  const width = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y0 - y0, 2));
+  const height = Math.sqrt(Math.pow(x1 - x1, 2) + Math.pow(y1 - y0, 2));
+
+  return { left: x0, top: y0, width, height };
 };

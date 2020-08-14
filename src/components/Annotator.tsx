@@ -14,7 +14,8 @@ interface Props {
     [key: string]: string;
   };
   scale?: number;
-  regex?: RegExp;
+  tokenizer?: RegExp;
+  disableOCR?: boolean;
   entity?: Entity;
   defaultAnnotations?: Array<Annotation>,
 }
@@ -24,7 +25,8 @@ const Annotator = ({
   data,
   httpHeaders,
   scale = 1.5,
-  regex = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
+  tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
+  disableOCR = false,
   entity,
   defaultAnnotations = [],
 }: Props) => {
@@ -59,7 +61,8 @@ const Annotator = ({
             page={page}
             scale={scale}
             key={key}
-            regex={regex}
+            tokenizer={tokenizer}
+            disableOCR={disableOCR}
             pageNumber={pageNumber}
             annotations={getAnnotationsForPage(pageNumber)}
             addAnnotation={addAnnotation}
@@ -69,7 +72,10 @@ const Annotator = ({
         );
       })
     );
-  }, [url, data, pages, error, scale, regex, entity, fetchPage, getAnnotationsForPage, addAnnotation, removeAnnotation]);
+  }, [
+    url, data, pages, error, scale, tokenizer, disableOCR, entity,
+    fetchPage, getAnnotationsForPage, addAnnotation, removeAnnotation
+  ]);
 
   return (
     <div className="annotator-container">

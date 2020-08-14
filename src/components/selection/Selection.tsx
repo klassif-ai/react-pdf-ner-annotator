@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import useMouse from '@react-hook/mouse-position';
+import { Rectangle } from 'tesseract.js';
 import { findIntersectingChildren } from '../../helpers/selectionHelpers';
 import { AnnotationParams } from '../../interfaces/annotation';
 import { Entity } from '../../interfaces/entity';
@@ -15,7 +16,7 @@ interface Props {
 }
 
 // left, top, width, height
-const initialCoords = [0, 0, 0, 0];
+const initialCoords: Rectangle = { left: 0, top: 0, width: 0, height: 0 };
 
 const Selection = ({
   pageNumber,
@@ -70,13 +71,13 @@ const Selection = ({
         page: pageNumber,
         tokens: [],
         textIds: [],
-        entity: entity!,
+        entity: entity!
       };
 
       intersects.forEach((intersect) => {
         const offsetX = intersect.offsetLeft;
         const offsetY = intersect.offsetTop;
-        findIntersectingChildren(intersect.children, coords, offsetX, offsetY).forEach((child) => {
+        findIntersectingChildren(intersect.children, coords, offsetX, offsetY).forEach((child, index) => {
           const dataI = child.getAttribute('data-i');
           if (dataI) {
             markToAdd.tokens.push(child.textContent);
@@ -108,7 +109,7 @@ const Selection = ({
     const y3 = Math.min(mouseCoords[1], y2);
     const y4 = Math.max(mouseCoords[1], y2);
 
-    setCoords([x3, y3, (x4 - x3), (y4 - y3)]);
+    setCoords({ left: x3, top: y3, width: (x4 - x3), height: (y4 - y3) });
   };
 
   const renderSelectionRectangle = useMemo(() => {
@@ -119,10 +120,10 @@ const Selection = ({
         className="selection__rectangle"
         style={{
           visibility,
-          left: `${coords[0]}px`,
-          top: `${coords[1]}px`,
-          width: `${coords[2]}px`,
-          height: `${coords[3]}px`,
+          left: `${coords.left}px`,
+          top: `${coords.top}px`,
+          width: `${coords.width}px`,
+          height: `${coords.height}px`,
         }}
       />
     );

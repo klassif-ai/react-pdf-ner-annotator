@@ -11,16 +11,19 @@ import { calculateTextProperties } from '../../helpers/pdfHelpers';
 import { generateRandomId } from '../../helpers/generalHelpers';
 import { Entity } from '../../interfaces/entity';
 import { Annotation, AnnotationParams } from '../../interfaces/annotation';
+import useTesseract from '../../hooks/useTesseract';
 import Mark from './mark/Mark';
 import Token from './token/Token';
 import Selection from '../selection/Selection';
+import OcrInfo from './ocrInfo/OcrInfo';
 import './Page.scss';
 
 interface Props {
   pageNumber: number;
   page: PDFPromise<PDFPageProxy>|null;
   scale: number;
-  regex: RegExp;
+  tokenizer: RegExp;
+  disableOCR: boolean;
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
   removeAnnotation: (id: string) => void;
@@ -31,7 +34,8 @@ const Page = ({
   pageNumber,
   page,
   scale,
-  regex,
+  tokenizer,
+  disableOCR,
   annotations,
   addAnnotation,
   removeAnnotation,
@@ -41,9 +45,19 @@ const Page = ({
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const { ocrResult, ocrLoading, doOCR } = useTesseract();
+
   const [context, setContext] = useState<CanvasRenderingContext2D|null>(null);
-  const [text, setText] = useState<TextContent|null>(null);
+  const [textContent, setTextContent] = useState<TextContent|null>(null);
   const [pageViewport, setPageViewport] = useState<any>({ width: 0, height: 0 });
+
+  const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
+
+  useEffect(() => {
+    if (!disableOCR && !textContent && inView) {
+      doOCR(context!.canvas);
+    }
+  }, [disableOCR, textContent, inView, context, pageViewport, doOCR]);
 
   useEffect(() => {
     if (canvasRef) {
@@ -55,7 +69,9 @@ const Page = ({
     if (canvasRef && context && page) {
       page.then((pdfPage) => {
         pdfPage.getTextContent().then((content) => {
-          setText(content);
+          if (content.items.length) {
+            setTextContent(content);
+          }
         });
 
         const viewport = pdfPage.getViewport({ scale });
@@ -72,6 +88,40 @@ const Page = ({
       });
     }
   }, [page, scale, canvasRef, context]);
+
+  const renderOcrText = useMemo(() => {
+    if (ocrResult) {
+      return ocrResult.ocrWords.map((ocrWord, index) => {
+        const dataI = index + 1;
+        const annotation = annotations.find((a) => a.textIds.includes(dataI));
+        return (
+          <span
+            className="token-container"
+            style={{
+              left: `${ocrWord.coords.left}px`,
+              top: `${ocrWord.coords.top}px`,
+              width: `${ocrWord.coords.width}px`,
+              height: `${ocrWord.coords.height}px`,
+            }}
+            key={generateRandomId(7)}
+          >
+            {
+              annotation ? (
+                <Mark
+                  token={ocrWord.token}
+                  annotation={annotation}
+                  removeAnnotation={removeAnnotation}
+                />
+              ) : (
+                <Token token={ocrWord.token} dataI={dataI} />
+              )
+            }
+          </span>
+        );
+      });
+    }
+    return null;
+  }, [ocrResult, annotations, removeAnnotation]);
 
   const renderTokens = useCallback((tokens: Array<string>, lastIndex: number) => {
     let index = 0;
@@ -120,10 +170,10 @@ const Page = ({
   }, [annotations, removeAnnotation]);
 
   const renderText = useMemo(() => {
-    if (canvasRef && text && inView) {
+    if (canvasRef && textContent && inView) {
       let lastIndex = 0;
-      return text.items.map((item) => {
-        const style = text.styles[item.fontName];
+      return textContent.items.map((item) => {
+        const style = textContent.styles[item.fontName];
         const {
           left,
           top,
@@ -137,7 +187,7 @@ const Page = ({
         );
 
         const { str } = item;
-        const matches = str.match(regex)!;
+        const matches = str.match(tokenizer)!;
 
         const token = (
           <span
@@ -156,13 +206,11 @@ const Page = ({
         );
 
         lastIndex += matches.filter((t) => t !== ' ').length;
-        // console.log(lastIndex);
-
         return token;
       });
     }
     return null;
-  }, [regex, text, context, pageViewport, canvasRef, inView, renderTokens]);
+  }, [tokenizer, textContent, context, pageViewport, canvasRef, inView, renderTokens]);
 
   return (
     <div className="page" ref={inViewRef}>
@@ -187,6 +235,8 @@ const Page = ({
           addAnnotation={addAnnotation}
         >
           { renderText }
+          { renderOcrText }
+          <OcrInfo loading={ocrLoading} message={message} />
         </Selection>
       </div>
     </div>
