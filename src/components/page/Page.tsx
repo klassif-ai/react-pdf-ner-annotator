@@ -45,11 +45,11 @@ const Page = ({
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale);
-
   const [context, setContext] = useState<CanvasRenderingContext2D|null>(null);
   const [textContent, setTextContent] = useState<TextContent|null>(null);
   const [pageViewport, setPageViewport] = useState<any>({ width: 0, height: 0 });
+
+  const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale, context!);
 
   const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
 
@@ -102,6 +102,8 @@ const Page = ({
               top: `${ocrWord.coords.top}px`,
               width: `${ocrWord.coords.width}px`,
               height: `${ocrWord.coords.height}px`,
+              fontSize: `${ocrWord.fontSize}px`,
+              transform: `scaleX(${ocrWord.transform})`,
             }}
             key={generateRandomId(7)}
           >
@@ -172,6 +174,7 @@ const Page = ({
   const renderText = useMemo(() => {
     if (canvasRef && textContent && inView) {
       let lastIndex = 0;
+      console.log('Start');
       return textContent.items.map((item) => {
         const style = textContent.styles[item.fontName];
         const {

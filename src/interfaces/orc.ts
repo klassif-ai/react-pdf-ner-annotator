@@ -5,6 +5,7 @@ export interface OCRWord {
   token: string;
   fontSize: number;
   fontFamily: string;
+  transform: number;
 }
 
 export interface OCRResult {

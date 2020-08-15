@@ -33,24 +33,62 @@ export const calculateTextProperties = (
     top = tx[5] - fontAscent * Math.cos(angle);
   }
 
+  const transform = calculateTransform(
+    textItem.width,
+    textItem.height,
+    fontSize,
+    style.fontFamily,
+    textItem.str,
+    viewPort.scale,
+    context,
+    style.vertical
+  );
+
+  return { left, top, fontSize, transform };
+};
+
+export const calculateTransform = (
+  textWidth: number,
+  textHeight: number,
+  fontSize: number,
+  fontFamily: string,
+  text: string,
+  scale: number,
+  context: CanvasRenderingContext2D,
+  isVertical = false,
+): number => {
   let canvasWidth;
   let transform = 1;
 
-  if (style.vertical) {
-    canvasWidth = textItem.height * viewPort.scale;
+  if (isVertical) {
+    canvasWidth = textHeight * scale;
   } else {
-    canvasWidth = textItem.width * viewPort.scale;
+    canvasWidth = textWidth * scale;
   }
 
   if (canvasWidth) {
-    context.font = `${fontSize}px ${style.fontFamily}`;
+    context.font = `${fontSize}px ${fontFamily}`;
 
-    const { width } = context.measureText(textItem.str);
+    const { width } = context.measureText(text);
+
     transform = canvasWidth / width;
   }
+  return transform;
+};
 
+export const calculateFontSize = (width: number, height: number, text: string): number => {
+  const area = width * height;
+  const { length } = text;
+
+  return Math.sqrt(area / length) * 1.3333;
+};
+
+export const recalculateBoundingBox = (coordinates: Rectangle, oldScale: number, newScale: number): Rectangle => {
   return {
-    left, top, fontSize, transform,
+    left: (coordinates.left / oldScale)  * newScale,
+    top: (coordinates.top / oldScale) * newScale,
+    width: (coordinates.width / oldScale)  * newScale,
+    height: (coordinates.height / oldScale) * newScale,
   };
 };
 

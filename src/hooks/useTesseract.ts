@@ -1,28 +1,42 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createWorker, ImageLike } from 'tesseract.js';
 import { OCRResult } from '../interfaces/orc';
-import { calculateRectangleProperties } from '../helpers/pdfHelpers';
+import {
+  calculateFontSize,
+  calculateRectangleProperties, calculateTransform,
+  recalculateBoundingBox,
+} from '../helpers/pdfHelpers';
 
 const worker = createWorker({
   logger: m => console.log(m),
 });
 
-const useTesseract = (scale: number) => {
+const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrError, setOcrError] = useState<string|undefined>(undefined);
   const [ocrResult, setOcrResult] = useState<OCRResult|null>(null);
 
   useEffect(() => {
     if (ocrResult && ocrResult.baseScale !== scale)  {
-      const rescaledWords = ocrResult.ocrWords.map((word) => ({
-        ...word,
-        coords: {
-          left: Math.round((word.coords.left / ocrResult.baseScale)  * scale),
-          top: Math.round((word.coords.top / ocrResult.baseScale) * scale),
-          width: Math.round((word.coords.width / ocrResult.baseScale)  * scale),
-          height: Math.round((word.coords.height / ocrResult.baseScale) * scale),
-        }
-      }));
+      const rescaledWords = ocrResult.ocrWords.map((word) => {
+        const coords = recalculateBoundingBox(word.coords, ocrResult.baseScale, scale);
+        const fontSize = calculateFontSize(coords.width, coords.height, word.token);
+        const transform = calculateTransform(
+          coords.width,
+          coords.height,
+          fontSize,
+          word.fontFamily,
+          word.token,
+          scale,
+          context,
+        );
+        return {
+          ...word,
+          coords,
+          fontSize,
+          transform,
+        };
+      });
 
       setOcrResult({
         ...ocrResult,
@@ -30,7 +44,7 @@ const useTesseract = (scale: number) => {
         baseScale: scale,
       });
     }
-  }, [ocrResult, scale]);
+  }, [ocrResult, scale, context]);
 
   const doOCR = useCallback(async (image: ImageLike, language = 'eng') => {
     setOcrLoading(true);
@@ -43,12 +57,27 @@ const useTesseract = (scale: number) => {
         setOcrLoading(false);
         setOcrResult({
           confidence: result.data.confidence,
-          ocrWords: result.data.words.map((word) => ({
-            coords: calculateRectangleProperties(word.bbox),
-            token: word.text,
-            fontSize: word.font_size,
-            fontFamily: word.font_name,
-          })),
+          ocrWords: result.data.words.map((word) => {
+            const coords = calculateRectangleProperties(word.bbox);
+            const fontSize = calculateFontSize(coords.width, coords.height, word.text);
+            const fontFamily = word.font_name || 'sans-serif';
+            const transform = calculateTransform(
+              coords.width,
+              coords.height,
+              fontSize,
+              fontFamily,
+              word.text,
+              scale,
+              context,
+            );
+            return {
+              coords,
+              token: word.text,
+              fontSize,
+              fontFamily,
+              transform,
+            };
+          }),
           baseScale: scale,
         });
       }, (error) => {
@@ -56,7 +85,7 @@ const useTesseract = (scale: number) => {
         setOcrLoading(false);
         setOcrError(error);
       });
-  }, []);
+  }, [scale, context]);
 
   return { ocrResult, ocrError, ocrLoading, doOCR };
 };
