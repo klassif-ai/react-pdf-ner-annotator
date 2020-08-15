@@ -45,7 +45,7 @@ const Page = ({
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { ocrResult, ocrLoading, doOCR } = useTesseract();
+  const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale);
 
   const [context, setContext] = useState<CanvasRenderingContext2D|null>(null);
   const [textContent, setTextContent] = useState<TextContent|null>(null);
@@ -57,7 +57,7 @@ const Page = ({
     if (!disableOCR && !textContent && inView) {
       doOCR(context!.canvas);
     }
-  }, [disableOCR, textContent, inView, context, pageViewport, doOCR]);
+  }, [disableOCR, textContent, inView, context, doOCR]);
 
   useEffect(() => {
     if (canvasRef) {
@@ -236,7 +236,7 @@ const Page = ({
         >
           { renderText }
           { renderOcrText }
-          <OcrInfo loading={ocrLoading} message={message} />
+          <OcrInfo loading={ocrLoading} message={message} error={ocrError} />
         </Selection>
       </div>
     </div>

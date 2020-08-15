@@ -10,4 +10,5 @@ export interface OCRWord {
 export interface OCRResult {
   confidence: number;
   ocrWords: Array<OCRWord>;
+  baseScale: number;
 }

@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import useMouse from '@react-hook/mouse-position';
 import { Rectangle } from 'tesseract.js';
-import { findIntersectingChildren } from '../../helpers/selectionHelpers';
+import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../../helpers/selectionHelpers';
 import { AnnotationParams } from '../../interfaces/annotation';
 import { Entity } from '../../interfaces/entity';
 import './Selection.scss';
+import { Point } from '../../interfaces/point';
 
 interface Props {
   pageNumber: number;
@@ -15,7 +16,6 @@ interface Props {
   entity?: Entity;
 }
 
-// left, top, width, height
 const initialCoords: Rectangle = { left: 0, top: 0, width: 0, height: 0 };
 
 const Selection = ({
@@ -30,15 +30,26 @@ const Selection = ({
   const mouse = useMouse(selectionRef);
 
   const [isDragging, setIsDragging] = useState(false);
-  const [mouseCoords, setMouseCoords] = useState([0, 0]);
+  const [mouseCoords, setMouseCoords] = useState<Point>({ x: 0, y: 0 });
   const [coords, setCoords] = useState(initialCoords);
+
+  const mode = () => {
+    if (entity && isDragging) {
+      return 'annotating-mode';
+    }
+    if (entity) {
+      return 'normal-mode';
+    }
+
+    return 'text-selection-mode';
+  };
 
   const handleKeyEvent = (event: KeyboardEvent) => {
     switch (event.key) {
       case 'Escape': {
         if (isDragging) {
           setIsDragging(false);
-          setMouseCoords([0, 0]);
+          setMouseCoords({ x: 0, y: 0 });
           setCoords(initialCoords);
         }
         break;
@@ -58,15 +69,20 @@ const Selection = ({
   const handleMouseDown = () => {
     if (entity) {
       const { x, y } = mouse;
-      setMouseCoords([x!, y!]);
+      setMouseCoords({ x: x!, y: y! });
       setIsDragging(true);
     }
   };
 
   const handleMouseUp = () => {
     if (selectionRef && entity) {
+      let coordsToUse = coords;
+      if (isCoordsEmpty(coords)) {
+        const { x, y } = mouse;
+        coordsToUse = { left: x!, top: y!, width: 5, height: 5 };
+      }
       const { children: selectionChildren } = selectionRef.current!;
-      const intersects = findIntersectingChildren(selectionChildren, coords);
+      const intersects = findIntersectingChildren(selectionChildren, coordsToUse);
       const markToAdd: AnnotationParams = {
         page: pageNumber,
         tokens: [],
@@ -77,7 +93,7 @@ const Selection = ({
       intersects.forEach((intersect) => {
         const offsetX = intersect.offsetLeft;
         const offsetY = intersect.offsetTop;
-        findIntersectingChildren(intersect.children, coords, offsetX, offsetY).forEach((child, index) => {
+        findIntersectingChildren(intersect.children, coordsToUse, offsetX, offsetY).forEach((child, index) => {
           const dataI = child.getAttribute('data-i');
           if (dataI) {
             markToAdd.tokens.push(child.textContent);
@@ -92,24 +108,15 @@ const Selection = ({
     }
 
     setIsDragging(false);
-    setMouseCoords([0, 0]);
+    setMouseCoords({ x: 0, y: 0 });
     setCoords(initialCoords);
   };
 
   const handleMouseMove = () => {
     if (isDragging && entity) {
       const { x, y } = mouse;
-      calculateSelectionRectangle(x!, y!);
+      setCoords(calculateSelectionRectangle(mouseCoords, { x: x!, y: y! }));
     }
-  };
-
-  const calculateSelectionRectangle = (x2: number, y2: number) => {
-    const x3 = Math.min(mouseCoords[0], x2);
-    const x4 = Math.max(mouseCoords[0], x2);
-    const y3 = Math.min(mouseCoords[1], y2);
-    const y4 = Math.max(mouseCoords[1], y2);
-
-    setCoords({ left: x3, top: y3, width: (x4 - x3), height: (y4 - y3) });
   };
 
   const renderSelectionRectangle = useMemo(() => {
@@ -133,7 +140,7 @@ const Selection = ({
     <div
       role="document"
       ref={selectionRef}
-      className={`selection-container ${className} ${entity ? 'annotating-mode' : 'text-selection-mode'}`}
+      className={`selection-container ${className} ${mode()}`}
       style={style}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}

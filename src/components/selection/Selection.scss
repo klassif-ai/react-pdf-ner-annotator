@@ -6,7 +6,6 @@
 
   &.text-selection-mode {
     cursor: text;
-
     &::-moz-selection {
       background: rgba(0, 0, 255, 0.2);
       color: transparent;
@@ -15,6 +14,10 @@
       background: rgba(0, 0, 255, 0.2);
       color: transparent;
     }
+  }
+
+  &.normal-mode {
+    cursor: default;
   }
 
   .selection__rectangle {

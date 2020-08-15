@@ -21,7 +21,11 @@ const OcrInfo = ({ loading, error, message }: Props) => {
       );
     }
     if (error) {
-      return <img src={exclamationCircle} className="ocr-info__icon" alt="error icon" />;
+      return (
+        <Tooltip message={error}>
+          <img src={exclamationCircle} className="ocr-info__icon" alt="error icon" />
+        </Tooltip>
+      );
     }
     if (message) {
       return (
