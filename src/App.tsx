@@ -36,7 +36,7 @@ const App = () => {
   });
 
   return (
-    <Annotator url={url} scale={scale} entity={entity} />
+    <Annotator url={scannedUrl} scale={scale} entity={entity} />
   );
 };
 

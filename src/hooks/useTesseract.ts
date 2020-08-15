@@ -8,7 +8,7 @@ import {
 } from '../helpers/pdfHelpers';
 
 const worker = createWorker({
-  logger: m => console.log(m),
+  logger: m => console.info(m),
 });
 
 const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
