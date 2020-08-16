@@ -1,42 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Annotator from './components/Annotator';
 import { Entity } from './interfaces/entity';
+import './App.scss';
 
 
 const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
 const scannedUrl = 'https://jeroen.github.io/images/ocrscan.pdf';
 
-const entity: Entity = {
-  id: 1,
-  name: 'Test',
-  color: '#81C784',
-};
+const entities: Array<Entity> = [
+  {
+    id: 1,
+    name: 'Location',
+    color: '#4DD0E1',
+  },
+  {
+    id: 2,
+    name: 'Person',
+    color: '#4DB6AC',
+  },
+  {
+    id: 3,
+    name: 'Organisation',
+    color: '#81C784',
+  },
+  {
+    id: 4,
+    name: 'Date',
+    color: '#AED581',
+  },
+  {
+    id: 5,
+    name: 'Other',
+    color: '#DCE775',
+  },
+];
 
 const App = () => {
-  const [scale, setScale] = useState(1.5);
-
-  const handleKeyEvent = (event: KeyboardEvent) => {
-    switch (event.key) {
-      case '+':
-        setScale(scale + 0.1);
-        break;
-      case '-':
-        setScale(scale - 0.1);
-        break;
-      default:
-        break;
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyEvent, false);
-    return () => {
-      document.removeEventListener('keydown', handleKeyEvent, false);
-    };
-  });
+  const [selectedEntity, setSelectedEntity] = useState(0);
 
   return (
-    <Annotator url={scannedUrl} scale={scale} entity={entity} />
+    <div className="app-container">
+      <div className="app__header">
+        <h1>Header</h1>
+      </div>
+      <div className="app__content">
+        <div className="app__content-wrapper">
+          <div className="app__content-main">
+            <Annotator url={scannedUrl} entity={entities[selectedEntity]} />
+          </div>
+          <div className="app__content-entities">
+            <h1>Entities</h1>
+            {
+              entities.map((entity, index) => (
+                <span
+                  role="button"
+                  key={entity.id}
+                  className="entity"
+                  style={selectedEntity === index ? { backgroundColor: entity.color } : { backgroundColor: '#bebebe' }}
+                  onClick={() => setSelectedEntity(index)}
+                >
+                  {entity.name}
+                </span>
+              ))
+            }
+
+          </div>
+        </div>
+      </div>
+      <div className="app__footer">
+        <h1>Footer</h1>
+      </div>
+    </div>
   );
 };
 

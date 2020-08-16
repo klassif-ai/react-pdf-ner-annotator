@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import usePDF from '../hooks/usePDF';
 import useAnnotations from '../hooks/useAnnotations';
 import Page from './page/Page';
@@ -6,6 +6,7 @@ import Error from './error/Error';
 import './Annotator.scss';
 import { Entity } from '../interfaces/entity';
 import { Annotation } from '../interfaces/annotation';
+import ButtonGroup from './fab/ButtonGroup';
 
 interface Props {
   url?: string;
@@ -13,7 +14,7 @@ interface Props {
   httpHeaders?: {
     [key: string]: string;
   };
-  scale?: number;
+  initialScale?: number;
   tokenizer?: RegExp;
   disableOCR?: boolean;
   entity?: Entity;
@@ -24,12 +25,14 @@ const Annotator = ({
   url,
   data,
   httpHeaders,
-  scale = 1.5,
+  initialScale = 1.5,
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
   disableOCR = false,
   entity,
   defaultAnnotations = [],
 }: Props) => {
+  const [scale, setScale] = useState(initialScale);
+
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders });
   const {
     annotations,
@@ -79,7 +82,9 @@ const Annotator = ({
 
   return (
     <div className="annotator-container">
-      { renderPages }
+      <div className="annotator-pages">
+        { renderPages }
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 {
-  "name": "react-pdf-annotator",
-  "version": "0.1.0",
+  "name": "react-pdf-ner-annotator",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@react-hook/mouse-position": "^4.1.0",

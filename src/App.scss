@@ -1,0 +1,58 @@
+.app-container {
+  .app__header {
+    height: 100px;
+    max-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #24292e;
+    color: #fff;
+  }
+
+  .app__content {
+    height: calc(100vh - 200px);
+    width: 100vw;
+    display: block;
+
+    .app__content-wrapper {
+      height: inherit;
+      display: flex;
+
+      .app__content-main {
+        height: inherit;
+        width: calc(100% - 300px);
+      }
+
+      .app__content-entities {
+        height: inherit;
+        width: 300px;
+        display: block;
+
+        h1 {
+          text-align: center;
+        }
+
+        .entity {
+          margin: 10px auto;
+          width: 120px;
+          display: block;
+          cursor: pointer;
+          border-radius: 10px;
+          padding: 10px;
+          background-color: #DCE775;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .app__footer {
+    height: 100px;
+    max-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #24292e;
+    color: #fff;
+  }
+}

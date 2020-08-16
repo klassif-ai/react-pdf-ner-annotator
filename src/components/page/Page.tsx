@@ -54,10 +54,10 @@ const Page = ({
   const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
 
   useEffect(() => {
-    if (!disableOCR && !textContent && inView) {
-      doOCR(context!.canvas);
+    if (!disableOCR && !textContent && inView && !ocrResult) {
+      doOCR();
     }
-  }, [disableOCR, textContent, inView, context, doOCR]);
+  }, [disableOCR, textContent, inView, doOCR, ocrResult]);
 
   useEffect(() => {
     if (canvasRef) {
@@ -174,7 +174,6 @@ const Page = ({
   const renderText = useMemo(() => {
     if (canvasRef && textContent && inView) {
       let lastIndex = 0;
-      console.log('Start');
       return textContent.items.map((item) => {
         const style = textContent.styles[item.fontName];
         const {

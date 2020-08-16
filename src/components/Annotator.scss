@@ -1,3 +1,10 @@
 .annotator-container {
-  padding: 40px;
+  height: inherit;
+  max-height: inherit;
+  background-color: #525659;
+  overflow-y: auto;
+
+  .annotator-pages {
+    padding: 50px 0;
+  }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { createWorker, ImageLike } from 'tesseract.js';
+import { createWorker } from 'tesseract.js';
 import { OCRResult } from '../interfaces/orc';
 import {
   calculateFontSize,
@@ -44,12 +44,12 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
     }
   }, [ocrResult, scale, context]);
 
-  const doOCR = useCallback(async (image: ImageLike, language = 'eng') => {
+  const doOCR = useCallback(async (language = 'eng') => {
     setOcrLoading(true);
     await worker.load();
     await worker.loadLanguage(language);
     await worker.initialize(language);
-    return worker.recognize(image)
+    return worker.recognize(context!.canvas)
       .then((result) => {
         setOcrError(undefined);
         setOcrLoading(false);
