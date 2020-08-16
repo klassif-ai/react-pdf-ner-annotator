@@ -103,6 +103,7 @@ const Page = ({
               width: `${ocrWord.coords.width}px`,
               height: `${ocrWord.coords.height}px`,
               fontSize: `${ocrWord.fontSize}px`,
+              transform: `scaleX(${ocrWord.transform})`,
             }}
             key={generateRandomId(7)}
           >

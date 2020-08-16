@@ -23,11 +23,9 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
         const fontSize = calculateFontSize(coords.width, coords.height, word.token);
         const transform = calculateTransform(
           coords.width,
-          coords.height,
           fontSize,
           word.fontFamily,
           word.token,
-          scale,
           context,
         );
         return {
@@ -63,11 +61,9 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
             const fontFamily = word.font_name || 'sans-serif';
             const transform = calculateTransform(
               coords.width,
-              coords.height,
               fontSize,
               fontFamily,
               word.text,
-              scale,
               context,
             );
             return {

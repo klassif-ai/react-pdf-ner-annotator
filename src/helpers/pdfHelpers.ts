@@ -33,38 +33,33 @@ export const calculateTextProperties = (
     top = tx[5] - fontAscent * Math.cos(angle);
   }
 
+  let canvasWidth;
+
+  if (style.vertical) {
+    canvasWidth = textItem.height * viewPort.scale;
+  } else {
+    canvasWidth = textItem.width * viewPort.scale;
+  }
+
   const transform = calculateTransform(
-    textItem.width,
-    textItem.height,
+    canvasWidth,
     fontSize,
     style.fontFamily,
     textItem.str,
-    viewPort.scale,
     context,
-    style.vertical
   );
 
   return { left, top, fontSize, transform };
 };
 
 export const calculateTransform = (
-  textWidth: number,
-  textHeight: number,
+  canvasWidth: number,
   fontSize: number,
   fontFamily: string,
   text: string,
-  scale: number,
   context: CanvasRenderingContext2D,
-  isVertical = false,
 ): number => {
-  let canvasWidth;
   let transform = 1;
-
-  if (isVertical) {
-    canvasWidth = textHeight * scale;
-  } else {
-    canvasWidth = textWidth * scale;
-  }
 
   if (canvasWidth) {
     context.font = `${fontSize}px ${fontFamily}`;
