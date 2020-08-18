@@ -20,12 +20,12 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
     if (ocrResult && ocrResult.baseScale !== scale)  {
       const rescaledWords = ocrResult.ocrWords.map((word) => {
         const coords = recalculateBoundingBox(word.coords, ocrResult.baseScale, scale);
-        const fontSize = calculateFontSize(coords.width, coords.height, word.token);
+        const fontSize = calculateFontSize(coords.width, coords.height, word.str);
         const transform = calculateTransform(
           coords.width,
           fontSize,
           word.fontFamily,
-          word.token,
+          word.str,
           context,
         );
         return {
@@ -68,7 +68,7 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
             );
             return {
               coords,
-              token: word.text,
+              str: word.text,
               fontSize,
               fontFamily,
               transform,

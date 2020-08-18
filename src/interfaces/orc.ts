@@ -2,7 +2,7 @@ import { Rectangle } from 'tesseract.js';
 
 export interface OCRWord {
   coords: Rectangle;
-  token: string;
+  str: string;
   fontSize: number;
   fontFamily: string;
   transform: number;

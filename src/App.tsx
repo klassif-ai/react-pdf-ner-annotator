@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+// @ts-ignore
+import JSONTree from 'react-json-tree';
 import Annotator from './components/Annotator';
 import { Entity } from './interfaces/entity';
 import './App.scss';
+import { Annotation } from './interfaces/annotation';
+import { TextMap } from './interfaces/textMap';
 
 
 const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
@@ -37,6 +41,8 @@ const entities: Array<Entity> = [
 
 const App = () => {
   const [selectedEntity, setSelectedEntity] = useState(0);
+  const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
+  const [textMap, setTextMap] = useState<Array<TextMap>>([]);
 
   return (
     <div className="app-container">
@@ -45,8 +51,20 @@ const App = () => {
       </div>
       <div className="app__content">
         <div className="app__content-wrapper">
+          <div className="app__content-output">
+            <JSONTree data={{
+              annotations,
+              textMap,
+            }}
+            />
+          </div>
           <div className="app__content-main">
-            <Annotator url={scannedUrl} entity={entities[selectedEntity]} />
+            <Annotator
+              url={scannedUrl}
+              entity={entities[selectedEntity]}
+              getAnnotations={setAnnotations}
+              getTextMaps={setTextMap}
+            />
           </div>
           <div className="app__content-entities">
             <h1>Entities</h1>

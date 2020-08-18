@@ -1,12 +1,6 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { PDFPageProxy, PDFPageViewport, PDFPromise, TextContent } from 'pdfjs-dist';
+import { PDFPageProxy, PDFPageViewport, PDFPromise, TextContent, TextContentItem } from 'pdfjs-dist';
 import { calculateTextProperties } from '../../helpers/pdfHelpers';
 import { generateRandomId } from '../../helpers/generalHelpers';
 import { Entity } from '../../interfaces/entity';
@@ -17,6 +11,8 @@ import Token from './token/Token';
 import Selection from '../selection/Selection';
 import OcrInfo from './ocrInfo/OcrInfo';
 import './Page.scss';
+import { OCRWord } from '../../interfaces/orc';
+import { TextMapType } from '../../interfaces/textMap';
 
 interface Props {
   pageNumber: number;
@@ -27,6 +23,13 @@ interface Props {
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
   removeAnnotation: (id: string) => void;
+  addTextMapPage: (
+    page: number,
+    pdfTextLayer: Array<TextContentItem|OCRWord>,
+    type: TextMapType,
+    confidence: number,
+    tokenizer?: RegExp,
+  ) => void;
   entity?: Entity;
 }
 
@@ -39,6 +42,7 @@ const Page = ({
   annotations,
   addAnnotation,
   removeAnnotation,
+  addTextMapPage,
   entity,
 }: Props) => {
   const [inViewRef, inView] = useInView({ threshold: 0 });
@@ -52,6 +56,18 @@ const Page = ({
   const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale, context!);
 
   const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
+
+  useEffect(() => {
+    if (annotations.length) {
+      if (textContent) {
+        addTextMapPage(pageNumber, textContent.items, TextMapType.TEXT_LAYER, 1, tokenizer);
+        return;
+      }
+      if (ocrResult) {
+        addTextMapPage(pageNumber, ocrResult.ocrWords, TextMapType.ORC, ocrResult.confidence);
+      }
+    }
+  }, [annotations, textContent, ocrResult, pageNumber, addTextMapPage, tokenizer]);
 
   useEffect(() => {
     if (!disableOCR && !textContent && inView && !ocrResult) {
@@ -110,12 +126,12 @@ const Page = ({
             {
               annotation ? (
                 <Mark
-                  token={ocrWord.token}
+                  token={ocrWord.str}
                   annotation={annotation}
                   removeAnnotation={removeAnnotation}
                 />
               ) : (
-                <Token token={ocrWord.token} dataI={dataI} />
+                <Token token={ocrWord.str} dataI={dataI} />
               )
             }
           </span>

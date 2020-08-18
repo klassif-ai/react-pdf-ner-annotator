@@ -18,9 +18,16 @@
       height: inherit;
       display: flex;
 
+      .app__content-output {
+        width: 300px;
+        background-color: #002b36;
+        height: inherit;
+        overflow-y: auto;
+      }
+
       .app__content-main {
         height: inherit;
-        width: calc(100% - 300px);
+        width: calc(100% - 600px);
       }
 
       .app__content-entities {
@@ -54,5 +61,6 @@
     justify-content: center;
     background-color: #24292e;
     color: #fff;
+    z-index: 3;
   }
 }

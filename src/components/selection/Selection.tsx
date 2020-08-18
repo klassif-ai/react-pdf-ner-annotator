@@ -4,8 +4,8 @@ import { Rectangle } from 'tesseract.js';
 import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../../helpers/selectionHelpers';
 import { AnnotationParams } from '../../interfaces/annotation';
 import { Entity } from '../../interfaces/entity';
-import './Selection.scss';
 import { Point } from '../../interfaces/point';
+import './Selection.scss';
 
 interface Props {
   pageNumber: number;

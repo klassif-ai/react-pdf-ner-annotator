@@ -1,12 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import usePDF from '../hooks/usePDF';
 import useAnnotations from '../hooks/useAnnotations';
+import useTextMap from '../hooks/useTextMap';
 import Page from './page/Page';
 import Error from './error/Error';
-import './Annotator.scss';
 import { Entity } from '../interfaces/entity';
 import { Annotation } from '../interfaces/annotation';
 import ButtonGroup from './fab/ButtonGroup';
+import './Annotator.scss';
+import { TextMap } from '../interfaces/textMap';
 
 interface Props {
   url?: string;
@@ -19,6 +21,8 @@ interface Props {
   disableOCR?: boolean;
   entity?: Entity;
   defaultAnnotations?: Array<Annotation>,
+  getAnnotations?: (annotations: Array<Annotation>) => void;
+  getTextMaps?: (textMaps: Array<TextMap>) => void;
 }
 
 const Annotator = ({
@@ -30,6 +34,8 @@ const Annotator = ({
   disableOCR = false,
   entity,
   defaultAnnotations = [],
+  getAnnotations,
+  getTextMaps,
 }: Props) => {
   const [scale, setScale] = useState(initialScale);
 
@@ -40,6 +46,16 @@ const Annotator = ({
     addAnnotation,
     removeAnnotation
   } = useAnnotations({ defaultAnnotations });
+  const { textMap, addPageToTextMap } = useTextMap(annotations);
+
+  useEffect(() => {
+    if (getAnnotations) {
+      getAnnotations(annotations);
+    }
+    if (getTextMaps) {
+      getTextMaps(textMap);
+    }
+  }, [annotations, textMap, getAnnotations, getTextMaps]);
 
   const renderPages = useMemo(() => {
     if (!url && !data) {
@@ -70,6 +86,7 @@ const Annotator = ({
             annotations={getAnnotationsForPage(pageNumber)}
             addAnnotation={addAnnotation}
             removeAnnotation={removeAnnotation}
+            addTextMapPage={addPageToTextMap}
             entity={entity}
           />
         );
@@ -77,7 +94,7 @@ const Annotator = ({
     );
   }, [
     url, data, pages, error, scale, tokenizer, disableOCR, entity,
-    fetchPage, getAnnotationsForPage, addAnnotation, removeAnnotation
+    fetchPage, getAnnotationsForPage, addAnnotation, removeAnnotation, addPageToTextMap
   ]);
 
   return (
