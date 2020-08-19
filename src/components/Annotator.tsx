@@ -20,6 +20,7 @@ interface Props {
   tokenizer?: RegExp;
   disableOCR?: boolean;
   entity?: Entity;
+  initialTextMap?: Array<TextMap>;
   defaultAnnotations?: Array<Annotation>,
   getAnnotations?: (annotations: Array<Annotation>) => void;
   getTextMaps?: (textMaps: Array<TextMap>) => void;
@@ -33,6 +34,7 @@ const Annotator = ({
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
   disableOCR = false,
   entity,
+  initialTextMap,
   defaultAnnotations = [],
   getAnnotations,
   getTextMaps,
@@ -53,9 +55,9 @@ const Annotator = ({
       getAnnotations(annotations);
     }
     if (getTextMaps) {
-      getTextMaps(textMap);
+      getTextMaps(initialTextMap || textMap);
     }
-  }, [annotations, textMap, getAnnotations, getTextMaps]);
+  }, [annotations, textMap, initialTextMap, getAnnotations, getTextMaps]);
 
   const renderPages = useMemo(() => {
     if (!url && !data) {

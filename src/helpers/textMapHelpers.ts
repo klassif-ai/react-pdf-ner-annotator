@@ -10,45 +10,35 @@ export const buildTextMapFromTextLayer = (
 
   if (type === TextMapType.TEXT_LAYER) {
     let index = 0;
-    pdfTextLayer.forEach((textLayerItem) => {
-      const { str, coords, fontSize } = textLayerItem;
-      str.match(tokenizer!)!.forEach((token) => {
-        if (token) {
-          index += 1;
-          textMap.push({
-            token,
-            dataI: index,
-            left: coords.left,
-            top: coords.top,
-            // TODO: this width and height is for the entire text paragraph, calculate this for words separately
-            width: coords.width,
-            height: coords.height,
-            fontSize,
-          });
-        } else {
-          textMap.push({
-            token,
-          });
-        }
-      });
-    });
+    // TODO: PDFs with text layers need a different approach for building the textmap
+    // pdfTextLayer.forEach((textLayerItem) => {
+    //   const { str, coords, fontSize } = textLayerItem;
+    //   str.match(tokenizer!)!.forEach((token) => {
+    //     if (token) {
+    //       index += 1;
+    //       textMap.push({
+    //         token,
+    //         dataI: index,
+    //         left: coords.left,
+    //         top: coords.top,
+    //         width: coords.width,
+    //         height: coords.height,
+    //         fontSize,
+    //       });
+    //     } else {
+    //       textMap.push({
+    //         token,
+    //       });
+    //     }
+    //   });
+    // });
   } else {
     pdfTextLayer.forEach((textLayerItem, index) => {
-      const { str, coords, fontSize } = textLayerItem;
       textMap.push({
-        token: str,
-        dataI: index + 1,
-        left: coords.left,
-        top: coords.top,
-        width: coords.width,
-        height: coords.height,
-        fontSize,
-      });
-      textMap.push({
-        token: ' '
+        ...textLayerItem,
+        dataI: index,
       });
     });
-    textMap.pop();
   }
 
   return textMap;

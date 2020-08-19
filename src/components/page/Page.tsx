@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import sortBy from 'lodash/sortBy';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport, PDFPromise } from 'pdfjs-dist';
-import { calculateTextProperties } from '../../helpers/pdfHelpers';
 import { generateRandomId } from '../../helpers/generalHelpers';
 import { Entity } from '../../interfaces/entity';
 import { Annotation, AnnotationParams } from '../../interfaces/annotation';
@@ -14,6 +12,7 @@ import OcrInfo from './ocrInfo/OcrInfo';
 import './Page.scss';
 import { Word } from '../../interfaces/orc';
 import { TextMapType } from '../../interfaces/textMap';
+import useTextLayer from '../../hooks/useTextLayer';
 
 interface Props {
   pageNumber: number;
@@ -51,25 +50,25 @@ const Page = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [context, setContext] = useState<CanvasRenderingContext2D|null>(null);
-  const [textContent, setTextContent] = useState<Array<Word>|null>(null);
   const [startOcr, setStartOcr] = useState(false);
   const [pageViewport, setPageViewport] = useState<any>({ width: 0, height: 0 });
 
+  const { textLayer, buildTextLayer } = useTextLayer();
   const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale, context!);
 
   const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
 
   useEffect(() => {
     if (annotations.length) {
-      if (textContent) {
-        addTextMapPage(pageNumber, textContent, TextMapType.TEXT_LAYER, 1, tokenizer);
+      if (textLayer) {
+        addTextMapPage(pageNumber, textLayer, TextMapType.TEXT_LAYER, 1, tokenizer);
         return;
       }
       if (ocrResult) {
         addTextMapPage(pageNumber, ocrResult.ocrWords, TextMapType.ORC, ocrResult.confidence);
       }
     }
-  }, [annotations, textContent, ocrResult, pageNumber, addTextMapPage, tokenizer]);
+  }, [annotations, textLayer, ocrResult, pageNumber, addTextMapPage, tokenizer]);
 
   useEffect(() => {
     if (!disableOCR && startOcr && inView && !ocrResult) {
@@ -87,41 +86,6 @@ const Page = ({
     if (canvasRef && context && page && inView) {
       page.then((pdfPage) => {
         const viewport = pdfPage.getViewport({ scale });
-        pdfPage.getTextContent().then((content) => {
-          if (content.items.length) {
-            const textResult: Array<Word> = content.items.map((item) => {
-              const style = content.styles[item.fontName];
-              const {
-                left,
-                top,
-                fontSize,
-                transform,
-              } = calculateTextProperties(
-                item,
-                style,
-                viewport as PDFPageViewport,
-                context!,
-              );
-
-              return {
-                coords: {
-                  left,
-                  top,
-                  width: item.width,
-                  height: item.height,
-                },
-                str: item.str,
-                fontSize,
-                fontFamily: style.fontFamily,
-                transform,
-              };
-            });
-            setTextContent(sortBy(textResult, ['coords.top', 'coords.left']));
-          } else {
-            setStartOcr(true);
-          }
-        });
-
         const { width, height } = viewport;
         setPageViewport(viewport);
         const canvas = canvasRef.current;
@@ -132,9 +96,17 @@ const Page = ({
           canvasContext: context!,
           viewport,
         });
+
+        pdfPage.getTextContent().then((content) => {
+          if (content.items.length) {
+            buildTextLayer(content, viewport as PDFPageViewport, context!);
+          } else {
+            setStartOcr(true);
+          }
+        });
       });
     }
-  }, [page, scale, canvasRef, context, inView]);
+  }, [page, scale, canvasRef, context, inView, buildTextLayer]);
 
   const renderOcrText = useMemo(() => {
     if (ocrResult) {
@@ -218,9 +190,9 @@ const Page = ({
   }, [annotations, removeAnnotation]);
 
   const renderText = useMemo(() => {
-    if (canvasRef && textContent && inView) {
+    if (canvasRef && textLayer && inView) {
       let lastIndex = 0;
-      return textContent.map((item) => {
+      return textLayer.map((item) => {
 
         const { str, coords, fontFamily, fontSize, transform } = item;
         const matches = str.match(tokenizer)!;
@@ -246,7 +218,7 @@ const Page = ({
       });
     }
     return null;
-  }, [tokenizer, textContent, canvasRef, inView, renderTokens]);
+  }, [tokenizer, textLayer, canvasRef, inView, renderTokens]);
 
   return (
     <div className="page" ref={inViewRef}>
