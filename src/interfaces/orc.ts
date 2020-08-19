@@ -1,6 +1,6 @@
 import { Rectangle } from 'tesseract.js';
 
-export interface OCRWord {
+export interface Word {
   coords: Rectangle;
   str: string;
   fontSize: number;
@@ -10,6 +10,6 @@ export interface OCRWord {
 
 export interface OCRResult {
   confidence: number;
-  ocrWords: Array<OCRWord>;
+  ocrWords: Array<Word>;
   baseScale: number;
 }

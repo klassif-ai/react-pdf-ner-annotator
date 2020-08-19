@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import sortBy from 'lodash/sortBy';
 import { useInView } from 'react-intersection-observer';
-import { PDFPageProxy, PDFPageViewport, PDFPromise, TextContent, TextContentItem } from 'pdfjs-dist';
+import { PDFPageProxy, PDFPageViewport, PDFPromise } from 'pdfjs-dist';
 import { calculateTextProperties } from '../../helpers/pdfHelpers';
 import { generateRandomId } from '../../helpers/generalHelpers';
 import { Entity } from '../../interfaces/entity';
@@ -11,7 +12,7 @@ import Token from './token/Token';
 import Selection from '../selection/Selection';
 import OcrInfo from './ocrInfo/OcrInfo';
 import './Page.scss';
-import { OCRWord } from '../../interfaces/orc';
+import { Word } from '../../interfaces/orc';
 import { TextMapType } from '../../interfaces/textMap';
 
 interface Props {
@@ -25,7 +26,7 @@ interface Props {
   removeAnnotation: (id: string) => void;
   addTextMapPage: (
     page: number,
-    pdfTextLayer: Array<TextContentItem|OCRWord>,
+    pdfTextLayer: Array<Word>,
     type: TextMapType,
     confidence: number,
     tokenizer?: RegExp,
@@ -50,7 +51,8 @@ const Page = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [context, setContext] = useState<CanvasRenderingContext2D|null>(null);
-  const [textContent, setTextContent] = useState<TextContent|null>(null);
+  const [textContent, setTextContent] = useState<Array<Word>|null>(null);
+  const [startOcr, setStartOcr] = useState(false);
   const [pageViewport, setPageViewport] = useState<any>({ width: 0, height: 0 });
 
   const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale, context!);
@@ -60,7 +62,7 @@ const Page = ({
   useEffect(() => {
     if (annotations.length) {
       if (textContent) {
-        addTextMapPage(pageNumber, textContent.items, TextMapType.TEXT_LAYER, 1, tokenizer);
+        addTextMapPage(pageNumber, textContent, TextMapType.TEXT_LAYER, 1, tokenizer);
         return;
       }
       if (ocrResult) {
@@ -70,10 +72,10 @@ const Page = ({
   }, [annotations, textContent, ocrResult, pageNumber, addTextMapPage, tokenizer]);
 
   useEffect(() => {
-    if (!disableOCR && !textContent && inView && !ocrResult) {
+    if (!disableOCR && startOcr && inView && !ocrResult) {
       doOCR();
     }
-  }, [disableOCR, textContent, inView, doOCR, ocrResult]);
+  }, [disableOCR, startOcr, inView, doOCR, ocrResult]);
 
   useEffect(() => {
     if (canvasRef) {
@@ -82,15 +84,44 @@ const Page = ({
   }, [canvasRef]);
 
   useEffect(() => {
-    if (canvasRef && context && page) {
+    if (canvasRef && context && page && inView) {
       page.then((pdfPage) => {
+        const viewport = pdfPage.getViewport({ scale });
         pdfPage.getTextContent().then((content) => {
           if (content.items.length) {
-            setTextContent(content);
+            const textResult: Array<Word> = content.items.map((item) => {
+              const style = content.styles[item.fontName];
+              const {
+                left,
+                top,
+                fontSize,
+                transform,
+              } = calculateTextProperties(
+                item,
+                style,
+                viewport as PDFPageViewport,
+                context!,
+              );
+
+              return {
+                coords: {
+                  left,
+                  top,
+                  width: item.width,
+                  height: item.height,
+                },
+                str: item.str,
+                fontSize,
+                fontFamily: style.fontFamily,
+                transform,
+              };
+            });
+            setTextContent(sortBy(textResult, ['coords.top', 'coords.left']));
+          } else {
+            setStartOcr(true);
           }
         });
 
-        const viewport = pdfPage.getViewport({ scale });
         const { width, height } = viewport;
         setPageViewport(viewport);
         const canvas = canvasRef.current;
@@ -103,7 +134,7 @@ const Page = ({
         });
       });
     }
-  }, [page, scale, canvasRef, context]);
+  }, [page, scale, canvasRef, context, inView]);
 
   const renderOcrText = useMemo(() => {
     if (ocrResult) {
@@ -167,7 +198,6 @@ const Page = ({
         return <Token token={token} dataI={dataI} key={generateRandomId(7)} />;
       }
 
-
       let space;
       if (markAsSpace) {
         space = (
@@ -190,31 +220,19 @@ const Page = ({
   const renderText = useMemo(() => {
     if (canvasRef && textContent && inView) {
       let lastIndex = 0;
-      return textContent.items.map((item) => {
-        const style = textContent.styles[item.fontName];
-        const {
-          left,
-          top,
-          fontSize,
-          transform,
-        } = calculateTextProperties(
-          item,
-          style,
-          pageViewport as PDFPageViewport,
-          context!,
-        );
+      return textContent.map((item) => {
 
-        const { str } = item;
+        const { str, coords, fontFamily, fontSize, transform } = item;
         const matches = str.match(tokenizer)!;
 
         const token = (
           <span
             className="token-container"
             style={{
-              left: `${left}px`,
-              top: `${top}px`,
+              left: `${coords.left}px`,
+              top: `${coords.top}px`,
               fontSize: `${fontSize}px`,
-              fontFamily: `${style.fontFamily}`,
+              fontFamily: `${fontFamily}`,
               transform: `scaleX(${transform})`,
             }}
             key={generateRandomId(7)}
@@ -228,7 +246,7 @@ const Page = ({
       });
     }
     return null;
-  }, [tokenizer, textContent, context, pageViewport, canvasRef, inView, renderTokens]);
+  }, [tokenizer, textContent, canvasRef, inView, renderTokens]);
 
   return (
     <div className="page" ref={inViewRef}>

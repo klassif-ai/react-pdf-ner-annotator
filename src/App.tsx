@@ -60,7 +60,7 @@ const App = () => {
           </div>
           <div className="app__content-main">
             <Annotator
-              url={scannedUrl}
+              url={url}
               entity={entities[selectedEntity]}
               getAnnotations={setAnnotations}
               getTextMaps={setTextMap}

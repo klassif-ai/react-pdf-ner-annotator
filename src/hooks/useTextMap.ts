@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { TextContentItem } from 'pdfjs-dist';
 import { TextMap, TextMapType } from '../interfaces/textMap';
-import { OCRWord } from '../interfaces/orc';
+import { Word } from '../interfaces/orc';
 import { buildTextMapFromTextLayer } from '../helpers/textMapHelpers';
 import { Annotation } from '../interfaces/annotation';
 
@@ -19,7 +18,7 @@ const useTextMap = (annotations: Array<Annotation>) => {
 
   const addPageToTextMap = (
     page: number,
-    pdfTextLayer: Array<TextContentItem|OCRWord>,
+    pdfTextLayer: Array<Word>,
     type: TextMapType,
     confidence: number,
     tokenizer?: RegExp,

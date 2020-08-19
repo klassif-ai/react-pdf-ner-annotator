@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createWorker } from 'tesseract.js';
+import sortBy from 'lodash/sortBy';
 import { OCRResult } from '../interfaces/orc';
 import {
   calculateFontSize,
@@ -53,27 +54,28 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
       .then((result) => {
         setOcrError(undefined);
         setOcrLoading(false);
+        const unsortedResult = result.data.words.map((word) => {
+          const coords = calculateRectangleProperties(word.bbox);
+          const fontSize = calculateFontSize(coords.width, coords.height, word.text);
+          const fontFamily = word.font_name || 'sans-serif';
+          const transform = calculateTransform(
+            coords.width,
+            fontSize,
+            fontFamily,
+            word.text,
+            context,
+          );
+          return {
+            coords,
+            str: word.text,
+            fontSize,
+            fontFamily,
+            transform,
+          };
+        });
         setOcrResult({
           confidence: result.data.confidence,
-          ocrWords: result.data.words.map((word) => {
-            const coords = calculateRectangleProperties(word.bbox);
-            const fontSize = calculateFontSize(coords.width, coords.height, word.text);
-            const fontFamily = word.font_name || 'sans-serif';
-            const transform = calculateTransform(
-              coords.width,
-              fontSize,
-              fontFamily,
-              word.text,
-              context,
-            );
-            return {
-              coords,
-              str: word.text,
-              fontSize,
-              fontFamily,
-              transform,
-            };
-          }),
+          ocrWords: sortBy(unsortedResult, ['coords.top', 'coords.left']),
           baseScale: scale,
         });
       }, (error) => {

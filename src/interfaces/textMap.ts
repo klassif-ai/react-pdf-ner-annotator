@@ -6,6 +6,11 @@ export enum TextMapType {
 export interface TextMapItem {
   token: string;
   dataI?: number;
+  left?: number;
+  top?: number;
+  width?: number;
+  height?: number;
+  fontSize?: number;
 }
 
 export interface TextMap {
