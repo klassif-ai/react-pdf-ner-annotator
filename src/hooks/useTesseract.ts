@@ -21,12 +21,12 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
     if (ocrResult && ocrResult.baseScale !== scale)  {
       const rescaledWords = ocrResult.ocrWords.map((word) => {
         const coords = recalculateBoundingBox(word.coords, ocrResult.baseScale, scale);
-        const fontSize = calculateFontSize(coords.width, coords.height, word.str);
+        const fontSize = calculateFontSize(coords.width, coords.height, word.text);
         const transform = calculateTransform(
           coords.width,
           fontSize,
           word.fontFamily,
-          word.str,
+          word.text,
           context,
         );
         return {
@@ -52,7 +52,6 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
     await worker.initialize(language);
     return worker.recognize(context!.canvas)
       .then((result) => {
-        console.log(result);
         setOcrError(undefined);
         setOcrLoading(false);
         const unsortedResult = result.data.words.map((word) => {
@@ -68,7 +67,7 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
           );
           return {
             coords,
-            str: word.text,
+            text: word.text,
             fontSize,
             fontFamily,
             transform,

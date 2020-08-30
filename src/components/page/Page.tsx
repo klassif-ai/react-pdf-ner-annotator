@@ -9,7 +9,6 @@ import Mark from './mark/Mark';
 import Token from './token/Token';
 import Selection from '../selection/Selection';
 import OcrInfo from './ocrInfo/OcrInfo';
-import { Word } from '../../interfaces/orc';
 import { TextLayerItem, TextLayerType } from '../../interfaces/textLayer';
 import useTextLayer from '../../hooks/useTextLayer';
 import Loader from '../loader/Loader';
@@ -26,7 +25,7 @@ interface Props {
   removeAnnotation: (id: string) => void;
   addPageToTextMap: (
     page: number,
-    pdfTextLayer: Array<Word>,
+    pdfTextLayer: Array<TextLayerItem>,
     type: TextLayerType,
     confidence: number,
     tokenizer?: RegExp,
@@ -141,12 +140,12 @@ const Page = ({
             {
               annotation ? (
                 <Mark
-                  token={ocrWord.str}
+                  token={ocrWord.text}
                   annotation={annotation}
                   removeAnnotation={removeAnnotation}
                 />
               ) : (
-                <Token token={ocrWord.str} dataI={dataI} />
+                <Token token={ocrWord.text} dataI={dataI} />
               )
             }
           </span>
@@ -206,8 +205,8 @@ const Page = ({
       let lastIndex = 0;
       return textLayer.map((item) => {
 
-        const { str, coords, fontFamily, fontSize, transform } = item;
-        const matches = str.match(tokenizer)!;
+        const { text, coords, fontFamily, fontSize, transform } = item;
+        const matches = text.match(tokenizer)!;
 
         const token = (
           <span

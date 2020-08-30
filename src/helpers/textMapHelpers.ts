@@ -1,8 +1,7 @@
-import { Word } from '../interfaces/orc';
 import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
 
 export const buildTextMapFromTextLayer = (
-  pdfTextLayer: Array<Word>,
+  pdfTextLayer: Array<TextLayerItem>,
   type: TextLayerType,
   tokenizer?: RegExp,
 ): Array<TextLayerItem> => {
@@ -12,15 +11,15 @@ export const buildTextMapFromTextLayer = (
     let index = 0;
     pdfTextLayer.forEach((textLayerItem) => {
       let offset = 0;
-      const { str, fontSize, fontFamily, transform, coords } = textLayerItem;
-      str.match(tokenizer!)!.forEach((token) => {
+      const { text, fontSize, fontFamily, transform, coords } = textLayerItem;
+      text.match(tokenizer!)!.forEach((token) => {
         const textWidth = calculateTextWidth(token, fontSize, fontFamily, transform);
         if (token !== ' ') {
           index += 1;
           textMap.push({
             ...textLayerItem,
             dataI: index,
-            str: token,
+            text: token,
             coords: {
               left: offset + coords.left,
               top: coords.height,

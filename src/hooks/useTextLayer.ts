@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { PDFPageViewport, TextContent } from 'pdfjs-dist';
 import sortBy from 'lodash/sortBy';
-import { Word } from '../interfaces/orc';
+import { TextLayerItem } from '../interfaces/textLayer';
 import {
   calculateFontSize,
   calculateTextProperties,
@@ -9,21 +9,20 @@ import {
   recalculateBoundingBox,
 } from '../helpers/pdfHelpers';
 
-
-const useTextLayer = (scale: number, context: CanvasRenderingContext2D,  initialTextLayer?: Array<Word>) => {
-  const [textLayer, setTextLayer] = useState<Array<Word>|null>(initialTextLayer || null);
+const useTextLayer = (scale: number, context: CanvasRenderingContext2D,  initialTextLayer?: Array<TextLayerItem>) => {
+  const [textLayer, setTextLayer] = useState<Array<TextLayerItem>|null>(initialTextLayer || null);
   const [baseScale, setBaseScale] = useState(scale);
 
   useEffect(() => {
     if (textLayer && baseScale !== scale) {
       const rescaledWords = textLayer.map((word) => {
         const coords = recalculateBoundingBox(word.coords, baseScale, scale);
-        const fontSize = calculateFontSize(coords.width, coords.height, word.str);
+        const fontSize = calculateFontSize(coords.width, coords.height, word.text);
         const transform = calculateTransform(
           coords.width,
           fontSize,
           word.fontFamily,
-          word.str,
+          word.text,
           context,
         );
         return {
@@ -43,7 +42,7 @@ const useTextLayer = (scale: number, context: CanvasRenderingContext2D,  initial
     textContent: TextContent,
     viewport: PDFPageViewport,
   ) => {
-    const textResult: Array<Word> = textContent.items.map((item) => {
+    const textResult: Array<TextLayerItem> = textContent.items.map((item) => {
       const style = textContent.styles[item.fontName];
       const {
         left,
@@ -64,7 +63,7 @@ const useTextLayer = (scale: number, context: CanvasRenderingContext2D,  initial
           width: item.width * scale,
           height: item.height * scale,
         },
-        str: item.str,
+        text: item.str,
         fontSize,
         fontFamily: style.fontFamily,
         transform,

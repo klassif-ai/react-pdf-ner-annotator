@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { TextLayer, TextLayerType } from '../interfaces/textLayer';
-import { Word } from '../interfaces/orc';
+import { TextLayer, TextLayerItem, TextLayerType } from '../interfaces/textLayer';
 import { buildTextMapFromTextLayer } from '../helpers/textMapHelpers';
 import { Annotation } from '../interfaces/annotation';
 
@@ -18,7 +17,7 @@ const useTextMap = (annotations: Array<Annotation>) => {
 
   const addPageToTextMap = useCallback((
     page: number,
-    pdfTextLayer: Array<Word>,
+    pdfTextLayer: Array<TextLayerItem>,
     type: TextLayerType,
     confidence: number,
     tokenizer?: RegExp,

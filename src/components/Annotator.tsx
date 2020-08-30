@@ -7,8 +7,7 @@ import Error from './error/Error';
 import ButtonGroup from './fab/ButtonGroup';
 import { Entity } from '../interfaces/entity';
 import { Annotation } from '../interfaces/annotation';
-import { TextLayer } from '../interfaces/textLayer';
-import { Word } from '../interfaces/orc';
+import { TextLayer, TextLayerItem } from '../interfaces/textLayer';
 import './Annotator.scss';
 
 interface Props {
@@ -62,7 +61,7 @@ const Annotator = ({
     }
   }, [annotations, textMap, initialTextMap, getAnnotations, getTextMaps]);
 
-  const getTextLayerForPage = useCallback((page: number): Array<Word> | undefined => {
+  const getTextLayerForPage = useCallback((page: number): Array<TextLayerItem> | undefined => {
     if (textLayer) {
       const found = textLayer.find((layer) => layer.page === page);
       return found ? found.textMapItems : undefined;

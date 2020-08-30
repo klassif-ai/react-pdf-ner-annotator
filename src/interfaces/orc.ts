@@ -1,15 +1,7 @@
-import { Rectangle } from 'tesseract.js';
-
-export interface Word {
-  coords: Rectangle;
-  str: string;
-  fontSize: number;
-  fontFamily: string;
-  transform: number;
-}
+import { TextLayerItem } from './textLayer';
 
 export interface OCRResult {
   confidence: number;
-  ocrWords: Array<Word>;
+  ocrWords: Array<TextLayerItem>;
   baseScale: number;
 }
