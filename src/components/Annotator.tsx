@@ -99,7 +99,7 @@ const Annotator = ({
             annotations={getAnnotationsForPage(pageNumber)}
             addAnnotation={addAnnotation}
             removeAnnotation={removeAnnotation}
-            addTextMapPage={addPageToTextMap}
+            addPageToTextMap={addPageToTextMap}
             entity={entity}
             initialTextLayer={getTextLayerForPage(index)}
           />

@@ -15,4 +15,3 @@ export interface TextLayer {
   type: TextLayerType;
   confidence: number;
 }
-

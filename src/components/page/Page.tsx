@@ -24,7 +24,7 @@ interface Props {
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
   removeAnnotation: (id: string) => void;
-  addTextMapPage: (
+  addPageToTextMap: (
     page: number,
     pdfTextLayer: Array<Word>,
     type: TextLayerType,
@@ -44,7 +44,7 @@ const Page = ({
   annotations,
   addAnnotation,
   removeAnnotation,
-  addTextMapPage,
+  addPageToTextMap,
   entity,
   initialTextLayer,
 }: Props) => {
@@ -58,7 +58,7 @@ const Page = ({
   const [startOcr, setStartOcr] = useState(false);
   const [pageViewport, setPageViewport] = useState<any>({ width: (916 / 1.5) * scale, height: (1174 / 1.5) * scale });
 
-  const { textLayer, buildTextLayer } = useTextLayer(initialTextLayer);
+  const { textLayer, buildTextLayer } = useTextLayer(scale, context!, initialTextLayer);
   const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale, context!);
 
   const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
@@ -66,14 +66,14 @@ const Page = ({
   useEffect(() => {
     if (annotations.length) {
       if (textLayer) {
-        addTextMapPage(pageNumber, textLayer, TextLayerType.TEXT_LAYER, 1, tokenizer);
+        addPageToTextMap(pageNumber, textLayer, TextLayerType.TEXT_LAYER, 1, tokenizer);
         return;
       }
       if (ocrResult) {
-        addTextMapPage(pageNumber, ocrResult.ocrWords, TextLayerType.ORC, ocrResult.confidence);
+        addPageToTextMap(pageNumber, ocrResult.ocrWords, TextLayerType.ORC, ocrResult.confidence);
       }
     }
-  }, [annotations, textLayer, ocrResult, pageNumber, addTextMapPage, tokenizer]);
+  }, [annotations, textLayer, ocrResult, pageNumber, addPageToTextMap, tokenizer]);
 
   useEffect(() => {
     if (!disableOCR && startOcr && inView && !ocrResult) {
@@ -111,7 +111,7 @@ const Page = ({
     if (inView && pdfPage && !textLayer) {
       pdfPage.getTextContent().then((content) => {
         if (content.items.length) {
-          buildTextLayer(content, pageViewport as PDFPageViewport, context!);
+          buildTextLayer(content, pageViewport as PDFPageViewport);
         } else {
           setStartOcr(true);
         }

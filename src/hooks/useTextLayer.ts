@@ -1,17 +1,47 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { PDFPageViewport, TextContent } from 'pdfjs-dist';
 import sortBy from 'lodash/sortBy';
 import { Word } from '../interfaces/orc';
-import { calculateTextProperties } from '../helpers/pdfHelpers';
+import {
+  calculateFontSize,
+  calculateTextProperties,
+  calculateTransform,
+  recalculateBoundingBox,
+} from '../helpers/pdfHelpers';
 
 
-const useTextLayer = (initialTextLayer?: Array<Word>) => {
+const useTextLayer = (scale: number, context: CanvasRenderingContext2D,  initialTextLayer?: Array<Word>) => {
   const [textLayer, setTextLayer] = useState<Array<Word>|null>(initialTextLayer || null);
+  const [baseScale, setBaseScale] = useState(scale);
+
+  useEffect(() => {
+    if (textLayer && baseScale !== scale) {
+      const rescaledWords = textLayer.map((word) => {
+        const coords = recalculateBoundingBox(word.coords, baseScale, scale);
+        const fontSize = calculateFontSize(coords.width, coords.height, word.str);
+        const transform = calculateTransform(
+          coords.width,
+          fontSize,
+          word.fontFamily,
+          word.str,
+          context,
+        );
+        return {
+          ...word,
+          coords,
+          fontSize,
+          transform,
+        };
+      });
+
+      setTextLayer(rescaledWords);
+      setBaseScale(scale);
+    }
+  }, [scale, baseScale, textLayer, context]);
 
   const buildTextLayer = useCallback( (
     textContent: TextContent,
     viewport: PDFPageViewport,
-    context: CanvasRenderingContext2D,
   ) => {
     const textResult: Array<Word> = textContent.items.map((item) => {
       const style = textContent.styles[item.fontName];
@@ -31,8 +61,8 @@ const useTextLayer = (initialTextLayer?: Array<Word>) => {
         coords: {
           left,
           top,
-          width: item.width,
-          height: item.height,
+          width: item.width * scale,
+          height: item.height * scale,
         },
         str: item.str,
         fontSize,
@@ -41,7 +71,7 @@ const useTextLayer = (initialTextLayer?: Array<Word>) => {
       };
     });
     setTextLayer(sortBy(textResult, ['coords.top', 'coords.left']));
-  }, []);
+  }, [context, scale]);
 
   return { textLayer, buildTextLayer };
 };
