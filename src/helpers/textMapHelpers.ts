@@ -1,35 +1,29 @@
 import { Word } from '../interfaces/orc';
-import { TextMapItem, TextMapType } from '../interfaces/textMap';
+import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
 
 export const buildTextMapFromTextLayer = (
   pdfTextLayer: Array<Word>,
-  type: TextMapType,
+  type: TextLayerType,
   tokenizer?: RegExp,
-): Array<TextMapItem> => {
-  const textMap: Array<TextMapItem> = [];
+): Array<TextLayerItem> => {
+  const textMap: Array<TextLayerItem> = [];
 
-  if (type === TextMapType.TEXT_LAYER) {
-    let index = 0;
-    // TODO: PDFs with text layers need a different approach for building the textmap
+  if (type === TextLayerType.TEXT_LAYER) {
+    // let index = 0;
+    // // TODO: PDFs with text layers need a different approach for building the textmap
     // pdfTextLayer.forEach((textLayerItem) => {
     //   const { str, coords, fontSize } = textLayerItem;
-    //   str.match(tokenizer!)!.forEach((token) => {
-    //     if (token) {
-    //       index += 1;
-    //       textMap.push({
-    //         token,
-    //         dataI: index,
-    //         left: coords.left,
-    //         top: coords.top,
-    //         width: coords.width,
-    //         height: coords.height,
-    //         fontSize,
-    //       });
-    //     } else {
-    //       textMap.push({
-    //         token,
-    //       });
-    //     }
+    //   str.match(tokenizer!)!.filter((token) => token).forEach((token) => {
+    //     index += 1;
+    //     textMap.push({
+    //       str: token,
+    //       dataI: index,
+    //       left: coords.left,
+    //       top: coords.top,
+    //       width: coords.width,
+    //       height: coords.height,
+    //       fontSize,
+    //     });
     //   });
     // });
   } else {

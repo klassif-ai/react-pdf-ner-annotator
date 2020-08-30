@@ -2,8 +2,8 @@ import React from 'react';
 import arrowRepeat from '../../../assets/icons/arrow-repeat.svg';
 import exclamationCircle from '../../../assets/icons/exclamation-circle.svg';
 import checkCircle from '../../../assets/icons/check-circle.svg';
-import './OcrInfo.scss';
 import Tooltip from '../../tooltip/Tooltip';
+import './OcrInfo.scss';
 
 interface Props {
   loading: boolean;

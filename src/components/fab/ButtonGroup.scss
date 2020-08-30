@@ -1,4 +1,7 @@
 .fab-group-container {
+  position: absolute;
+  bottom: 10px;
+  right: 40px;
   text-align: center;
   padding: inherit;
   width: 50px;
@@ -35,6 +38,10 @@
           text-decoration: none;
           color: #555;
           background: #f5f5f5;
+        }
+
+        &:active {
+          transform: scale(0.95);
         }
       }
     }

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { TextMap, TextMapType } from '../interfaces/textMap';
+import { useState, useEffect, useCallback } from 'react';
+import { TextLayer, TextLayerType } from '../interfaces/textLayer';
 import { Word } from '../interfaces/orc';
 import { buildTextMapFromTextLayer } from '../helpers/textMapHelpers';
 import { Annotation } from '../interfaces/annotation';
 
 const useTextMap = (annotations: Array<Annotation>) => {
-  const [textMap, setTextMap] = useState<Array<TextMap>>([]);
+  const [textMap, setTextMap] = useState<Array<TextLayer>>([]);
 
   useEffect(() => {
     const pagesWithAnnotations = Array.from(new Set(annotations.map((annotation) => annotation.page)).values());
@@ -16,10 +16,10 @@ const useTextMap = (annotations: Array<Annotation>) => {
     }
   }, [annotations, textMap]);
 
-  const addPageToTextMap = (
+  const addPageToTextMap = useCallback((
     page: number,
     pdfTextLayer: Array<Word>,
-    type: TextMapType,
+    type: TextLayerType,
     confidence: number,
     tokenizer?: RegExp,
   ) => {
@@ -30,7 +30,7 @@ const useTextMap = (annotations: Array<Annotation>) => {
       ];
       setTextMap(newTextMap);
     }
-  };
+  }, [textMap]);
 
   return { textMap, addPageToTextMap };
 };

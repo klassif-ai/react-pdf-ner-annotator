@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import JSONTree from 'react-json-tree';
 import Annotator from './components/Annotator';
 import { Entity } from './interfaces/entity';
-import './App.scss';
 import { Annotation } from './interfaces/annotation';
-import { TextMap } from './interfaces/textMap';
+import { TextLayer } from './interfaces/textLayer';
+import './App.scss';
 
 
 const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
@@ -42,7 +42,7 @@ const entities: Array<Entity> = [
 const App = () => {
   const [selectedEntity, setSelectedEntity] = useState(0);
   const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
-  const [textMap, setTextMap] = useState<Array<TextMap>>([]);
+  const [textMap, setTextMap] = useState<Array<TextLayer>>([]);
 
   return (
     <div className="app-container">
@@ -81,7 +81,6 @@ const App = () => {
                 </span>
               ))
             }
-
           </div>
         </div>
       </div>

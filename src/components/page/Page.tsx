@@ -9,10 +9,11 @@ import Mark from './mark/Mark';
 import Token from './token/Token';
 import Selection from '../selection/Selection';
 import OcrInfo from './ocrInfo/OcrInfo';
-import './Page.scss';
 import { Word } from '../../interfaces/orc';
-import { TextMapType } from '../../interfaces/textMap';
+import { TextLayerItem, TextLayerType } from '../../interfaces/textLayer';
 import useTextLayer from '../../hooks/useTextLayer';
+import Loader from '../loader/Loader';
+import './Page.scss';
 
 interface Props {
   pageNumber: number;
@@ -26,11 +27,12 @@ interface Props {
   addTextMapPage: (
     page: number,
     pdfTextLayer: Array<Word>,
-    type: TextMapType,
+    type: TextLayerType,
     confidence: number,
     tokenizer?: RegExp,
   ) => void;
   entity?: Entity;
+  initialTextLayer?: Array<TextLayerItem>;
 }
 
 const Page = ({
@@ -44,16 +46,19 @@ const Page = ({
   removeAnnotation,
   addTextMapPage,
   entity,
+  initialTextLayer,
 }: Props) => {
   const [inViewRef, inView] = useInView({ threshold: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [loading, setLoading] = useState(true);
+  const [pdfPage, setPdfPage] = useState<PDFPageProxy|null>(null);
   const [context, setContext] = useState<CanvasRenderingContext2D|null>(null);
   const [startOcr, setStartOcr] = useState(false);
-  const [pageViewport, setPageViewport] = useState<any>({ width: 0, height: 0 });
+  const [pageViewport, setPageViewport] = useState<any>({ width: (916 / 1.5) * scale, height: (1174 / 1.5) * scale });
 
-  const { textLayer, buildTextLayer } = useTextLayer();
+  const { textLayer, buildTextLayer } = useTextLayer(initialTextLayer);
   const { ocrResult, ocrError, ocrLoading, doOCR } = useTesseract(scale, context!);
 
   const message = ocrResult ? `OCR confidence ${ocrResult.confidence}%` : undefined;
@@ -61,11 +66,11 @@ const Page = ({
   useEffect(() => {
     if (annotations.length) {
       if (textLayer) {
-        addTextMapPage(pageNumber, textLayer, TextMapType.TEXT_LAYER, 1, tokenizer);
+        addTextMapPage(pageNumber, textLayer, TextLayerType.TEXT_LAYER, 1, tokenizer);
         return;
       }
       if (ocrResult) {
-        addTextMapPage(pageNumber, ocrResult.ocrWords, TextMapType.ORC, ocrResult.confidence);
+        addTextMapPage(pageNumber, ocrResult.ocrWords, TextLayerType.ORC, ocrResult.confidence);
       }
     }
   }, [annotations, textLayer, ocrResult, pageNumber, addTextMapPage, tokenizer]);
@@ -84,29 +89,36 @@ const Page = ({
 
   useEffect(() => {
     if (canvasRef && context && page && inView) {
-      page.then((pdfPage) => {
-        const viewport = pdfPage.getViewport({ scale });
+      page.then((pdfPageResult) => {
+        const viewport = pdfPageResult.getViewport({ scale });
         const { width, height } = viewport;
         setPageViewport(viewport);
         const canvas = canvasRef.current;
         canvas!.width = width;
         canvas!.height = height;
 
-        pdfPage.render({
+        pdfPageResult.render({
           canvasContext: context!,
           viewport,
-        });
-
-        pdfPage.getTextContent().then((content) => {
-          if (content.items.length) {
-            buildTextLayer(content, viewport as PDFPageViewport, context!);
-          } else {
-            setStartOcr(true);
-          }
+        }).promise.then(() => {
+          setPdfPage(pdfPageResult);
         });
       });
     }
-  }, [page, scale, canvasRef, context, inView, buildTextLayer]);
+  }, [page, scale, canvasRef, context, inView]);
+
+  useEffect(() => {
+    if (inView && pdfPage && !textLayer) {
+      pdfPage.getTextContent().then((content) => {
+        if (content.items.length) {
+          buildTextLayer(content, pageViewport as PDFPageViewport, context!);
+        } else {
+          setStartOcr(true);
+        }
+        setLoading(false);
+      });
+    }
+  }, [inView, pdfPage, pageViewport, context, page, textLayer, buildTextLayer]);
 
   const renderOcrText = useMemo(() => {
     if (ocrResult) {
@@ -230,6 +242,7 @@ const Page = ({
           className="page__canvas-container"
           style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}
         >
+          { loading ? <Loader /> : null }
           <canvas
             ref={canvasRef}
             style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}

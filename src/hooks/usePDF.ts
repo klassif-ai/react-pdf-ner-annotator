@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 // @ts-ignore
 import * as PdfJs from 'pdfjs-dist/build/pdf.min';
 // @ts-ignore
@@ -66,12 +66,12 @@ const usePDF = ({ url, data, httpHeaders }: Props) => {
     }
   }, [url, data, httpHeaders]);
 
-  const fetchPage = (index: number): PDFPromise<PDFPageProxy>|null => {
+  const fetchPage = useCallback((index: number): PDFPromise<PDFPageProxy>|null => {
     if (document) {
       return document.getPage(index);
     }
     return null;
-  };
+  }, [document]);
 
   return { pages, error, fetchPage };
 };

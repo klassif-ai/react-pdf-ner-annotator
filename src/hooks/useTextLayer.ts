@@ -4,8 +4,9 @@ import sortBy from 'lodash/sortBy';
 import { Word } from '../interfaces/orc';
 import { calculateTextProperties } from '../helpers/pdfHelpers';
 
-const useTextLayer = () => {
-  const [textLayer, setTextLayer] = useState<Array<Word>|null>(null);
+
+const useTextLayer = (initialTextLayer?: Array<Word>) => {
+  const [textLayer, setTextLayer] = useState<Array<Word>|null>(initialTextLayer || null);
 
   const buildTextLayer = useCallback( (
     textContent: TextContent,

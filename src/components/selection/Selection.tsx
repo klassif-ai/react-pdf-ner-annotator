@@ -79,7 +79,7 @@ const Selection = ({
       let coordsToUse = coords;
       if (isCoordsEmpty(coords)) {
         const { x, y } = mouse;
-        coordsToUse = { left: x!, top: y!, width: 5, height: 5 };
+        coordsToUse = { left: x!, top: y!, width: 1, height: 1 };
       }
       const { children: selectionChildren } = selectionRef.current!;
       const intersects = findIntersectingChildren(selectionChildren, coordsToUse);

@@ -1,7 +1,7 @@
 import React from 'react';
 import plus from '../../assets/icons/plus.svg';
 import minus from '../../assets/icons/dash.svg';
-import './FAB.scss';
+import './ButtonGroup.scss';
 
 interface Props {
   scale: number;

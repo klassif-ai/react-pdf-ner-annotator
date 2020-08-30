@@ -52,6 +52,7 @@ const useTesseract = (scale: number, context: CanvasRenderingContext2D) => {
     await worker.initialize(language);
     return worker.recognize(context!.canvas)
       .then((result) => {
+        console.log(result);
         setOcrError(undefined);
         setOcrLoading(false);
         const unsortedResult = result.data.words.map((word) => {
