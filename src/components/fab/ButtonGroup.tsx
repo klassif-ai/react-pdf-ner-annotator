@@ -21,13 +21,6 @@ const ButtonGroup = ({ scale, setScale }: Props) => {
       <ul className="fab-group__list">
         <li className="fab-group__list-item">
           <span
-            className="fab-group__info"
-          >
-            {scale}
-          </span>
-        </li>
-        <li className="fab-group__list-item">
-          <span
             role="button"
             className="fab-group__button"
             onClick={() => incrementScale(.1)}

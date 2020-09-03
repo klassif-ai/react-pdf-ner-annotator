@@ -1,13 +1,21 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import usePDF from '../hooks/usePDF';
-import useAnnotations from '../hooks/useAnnotations';
-import useTextMap from '../hooks/useTextMap';
-import Page from './page/Page';
-import Error from './error/Error';
-import ButtonGroup from './fab/ButtonGroup';
-import { Entity } from '../interfaces/entity';
-import { Annotation } from '../interfaces/annotation';
-import { TextLayer, TextLayerItem } from '../interfaces/textLayer';
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useImperativeHandle,
+  forwardRef,
+  Ref,
+} from 'react';
+import usePDF from './hooks/usePDF';
+import useAnnotations from './hooks/useAnnotations';
+import useTextMap from './hooks/useTextMap';
+import Page from './components/page/Page';
+import Error from './components/error/Error';
+import ButtonGroup from './components/fab/ButtonGroup';
+import { Entity } from './interfaces/entity';
+import { Annotation } from './interfaces/annotation';
+import { TextLayer, TextLayerItem } from './interfaces/textLayer';
 import './Annotator.scss';
 
 interface Props {
@@ -27,7 +35,7 @@ interface Props {
   getTextMaps?: (textMaps: Array<TextLayer>) => void;
 }
 
-const Annotator = ({
+const Annotator = forwardRef(({
   url,
   data,
   textLayer,
@@ -40,7 +48,7 @@ const Annotator = ({
   defaultAnnotations = [],
   getAnnotations,
   getTextMaps,
-}: Props) => {
+}: Props, ref?: Ref<any>) => {
   const [scale, setScale] = useState(initialScale);
 
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders });
@@ -48,9 +56,15 @@ const Annotator = ({
     annotations,
     getAnnotationsForPage,
     addAnnotation,
-    removeAnnotation
+    removeAnnotation: deleteAnnotation
   } = useAnnotations(defaultAnnotations);
   const { textMap, addPageToTextMap } = useTextMap(annotations);
+
+  useImperativeHandle(ref, () => ({ removeAnnotation }));
+
+  const removeAnnotation = (id: string) => {
+    deleteAnnotation(id);
+  };
 
   useEffect(() => {
     if (getAnnotations) {
@@ -97,7 +111,7 @@ const Annotator = ({
             pageNumber={pageNumber}
             annotations={getAnnotationsForPage(pageNumber)}
             addAnnotation={addAnnotation}
-            removeAnnotation={removeAnnotation}
+            removeAnnotation={deleteAnnotation}
             addPageToTextMap={addPageToTextMap}
             entity={entity}
             initialTextLayer={getTextLayerForPage(index)}
@@ -107,7 +121,7 @@ const Annotator = ({
     );
   }, [
     url, data, pages, error, scale, tokenizer, disableOCR, entity,
-    fetchPage, getAnnotationsForPage, addAnnotation, removeAnnotation, addPageToTextMap, getTextLayerForPage,
+    fetchPage, getAnnotationsForPage, addAnnotation, deleteAnnotation, addPageToTextMap, getTextLayerForPage,
   ]);
 
   return (
@@ -120,6 +134,7 @@ const Annotator = ({
       <ButtonGroup scale={scale} setScale={setScale} />
     </div>
   );
-};
+});
 
 export default Annotator;
+
