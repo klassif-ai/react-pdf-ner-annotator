@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import lodash from 'lodash';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport, PDFPromise } from 'pdfjs-dist';
-import { generateRandomId } from '../../helpers/generalHelpers';
-import { Entity } from '../../interfaces/entity';
-import { Annotation, AnnotationParams } from '../../interfaces/annotation';
-import useTesseract from '../../hooks/useTesseract';
-import Mark from './mark/Mark';
-import Token from './token/Token';
-import Selection from '../selection/Selection';
-import OcrInfo from './ocrInfo/OcrInfo';
-import { TextLayerItem, TextLayerType } from '../../interfaces/textLayer';
-import useTextLayer from '../../hooks/useTextLayer';
-import Loader from '../loader/Loader';
-import './Page.scss';
+import { generateRandomId } from '../helpers/generalHelpers';
+import { Entity } from '../interfaces/entity';
+import { Annotation, AnnotationParams } from '../interfaces/annotation';
+import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
+import useTesseract from '../hooks/useTesseract';
+import useTextLayer from '../hooks/useTextLayer';
+import Mark from './Mark';
+import Token from './Token';
+import Selection from './Selection';
+import OcrInfo from './OcrInfo';
+import Loader from './Loader';
 
 interface Props {
   pageNumber: number;
@@ -206,7 +206,7 @@ const Page = ({
       return textLayer.map((item) => {
 
         const { text, coords, fontFamily, fontSize, transform } = item;
-        const matches = text.match(tokenizer)!;
+        const matches = lodash.deburr(text).match(tokenizer)!;
 
         const token = (
           <span

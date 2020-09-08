@@ -1,6 +1,4 @@
-export enum EntityType {
-  NER = 'NER',
-}
+export type EntityType = 'NER';
 
 export interface Entity {
   id: number;

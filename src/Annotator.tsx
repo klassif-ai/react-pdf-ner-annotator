@@ -10,13 +10,12 @@ import React, {
 import usePDF from './hooks/usePDF';
 import useAnnotations from './hooks/useAnnotations';
 import useTextMap from './hooks/useTextMap';
-import Page from './components/page/Page';
-import Error from './components/error/Error';
-import ButtonGroup from './components/fab/ButtonGroup';
+import Page from './components/Page';
+import Error from './components/Error';
+import ButtonGroup from './components/ButtonGroup';
 import { Entity } from './interfaces/entity';
 import { Annotation } from './interfaces/annotation';
 import { TextLayer, TextLayerItem } from './interfaces/textLayer';
-import './Annotator.scss';
 
 interface Props {
   url?: string;
@@ -31,8 +30,8 @@ interface Props {
   entity?: Entity;
   initialTextMap?: Array<TextLayer>;
   defaultAnnotations?: Array<Annotation>,
-  getAnnotations?: (annotations: Array<Annotation>) => void;
-  getTextMaps?: (textMaps: Array<TextLayer>) => void;
+  getAnnotations(annotations: Array<Annotation>): void
+  getTextMaps?(textMaps: Array<TextLayer>): void;
 }
 
 const Annotator = forwardRef(({

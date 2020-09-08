@@ -1,5 +1,4 @@
 import React from 'react';
-import './Tooltip.scss';
 
 interface Props {
   children: React.ReactNode;

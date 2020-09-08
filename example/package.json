@@ -1,0 +1,36 @@
+{
+  "name": "react-pdf-ner-annotator-example",
+  "homepage": "https://MaartenBloemen.github.io/react-pdf-ner-annotator",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@types/react-json-tree": "^0.6.11",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-json-tree": "^0.12.1",
+    "react-pdf-ner-annotator": "file:..",
+    "react-scripts": "^3.4.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

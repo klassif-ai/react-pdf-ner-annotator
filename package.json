@@ -2,31 +2,20 @@
   "name": "react-pdf-ner-annotator",
   "version": "1.0.0",
   "private": true,
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "dependencies": {
     "@react-hook/mouse-position": "^4.1.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "@types/jest": "^24.9.1",
-    "@types/lodash": "^4.14.159",
-    "@types/node": "^12.12.54",
-    "@types/pdfjs-dist": "^2.1.5",
-    "@types/react": "^16.9.44",
-    "@types/react-dom": "^16.9.8",
     "lodash": "^4.17.20",
-    "node-sass": "^4.14.1",
     "pdfjs-dist": "^2.4.456",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "react-intersection-observer": "^8.26.2",
-    "react-json-tree": "^0.12.1",
-    "react-scripts": "3.4.1",
-    "tesseract.js": "^2.1.1",
-    "typescript": "^3.7.5"
+    "tesseract.js": "^2.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "rimraf lib && tsc -p ./ --declaration --outDir lib/ && npm run sass-compile && npm run copy",
+    "sass-compile": "node-sass  -r src/scss -o lib/css",
+    "copy": "copyfiles -u 1 \"./src/**/*.svg\" \"lib\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -46,9 +35,19 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@types/jest": "^24.9.1",
+    "@types/lodash": "^4.14.159",
+    "@types/node": "^12.12.54",
+    "@types/pdfjs-dist": "^2.1.5",
+    "@types/react": "^16.9.44",
+    "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "3.8.0",
     "@typescript-eslint/parser": "3.8.0",
     "babel-eslint": "10.1.0",
+    "copyfiles": "^2.3.0",
     "eslint": "^6.6.0",
     "eslint-config-airbnb": "18.2.0",
     "eslint-config-airbnb-typescript": "9.0.0",
@@ -62,8 +61,15 @@
     "eslint-plugin-prettier": "3.1.4",
     "eslint-plugin-react": "7.20.5",
     "eslint-plugin-react-hooks": "4.0.8",
+    "node-sass": "^4.14.1",
     "prettier": "2.0.5",
     "prettier-eslint": "11.0.0",
-    "prettier-eslint-cli": "5.0.0"
+    "prettier-eslint-cli": "5.0.0",
+    "typescript": "^3.7.5"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
+    "react-scripts": "3.4.1"
   }
 }

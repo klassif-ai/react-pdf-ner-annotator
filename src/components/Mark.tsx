@@ -1,6 +1,5 @@
 import React from 'react';
-import { Annotation } from '../../../interfaces/annotation';
-import './Mark.scss';
+import { Annotation } from '../interfaces/annotation';
 
 
 
