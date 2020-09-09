@@ -15,7 +15,7 @@
     "start": "react-scripts start",
     "build": "rimraf lib && tsc -p ./ --declaration --outDir lib/ && npm run sass-compile && npm run copy",
     "sass-compile": "node-sass  -r src/scss -o lib/css",
-    "copy": "copyfiles -u 1 \"./src/**/*.svg\" \"lib\"",
+    "copy": "copyfiles -u 1 \"./src/**/*{.svg,scss}\" \"lib\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
