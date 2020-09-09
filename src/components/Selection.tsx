@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import useMouse from '@react-hook/mouse-position';
 import { Rectangle } from 'tesseract.js';
-import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../../helpers/selectionHelpers';
-import { AnnotationParams } from '../../interfaces/annotation';
-import { Entity } from '../../interfaces/entity';
-import { Point } from '../../interfaces/point';
-import './Selection.scss';
+import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../helpers/selectionHelpers';
+import { AnnotationParams } from '../interfaces/annotation';
+import { Entity } from '../interfaces/entity';
+import { Point } from '../interfaces/point';
 
 interface Props {
   pageNumber: number;

@@ -1,12 +1,11 @@
-import React, { useState, useRef } from 'react';
-// @ts-ignore
+import React, { useRef, useState } from 'react';
 import JSONTree from 'react-json-tree';
-import Annotator from './Annotator';
-import { Entity, EntityType } from './interfaces/entity';
-import { Annotation } from './interfaces/annotation';
-import { TextLayer } from './interfaces/textLayer';
-import { AnnotatorHandle } from './types';
+import Annotator from 'react-pdf-ner-annotator';
+import { Entity } from 'react-pdf-ner-annotator/src/interfaces/entity';
+import { Annotation } from 'react-pdf-ner-annotator/src/interfaces/annotation';
+import { AnnotatorHandle } from 'react-pdf-ner-annotator/src/types';
 import './App.scss';
+import 'react-pdf-ner-annotator/src/scss/style.scss';
 
 const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
 const scannedUrl = 'https://jeroen.github.io/images/ocrscan.pdf';
@@ -16,38 +15,38 @@ const entities: Array<Entity> = [
     id: 1,
     name: 'Location',
     color: '#4DD0E1',
-    entityType: EntityType.NER,
+    entityType: 'NER',
   },
   {
     id: 2,
     name: 'Person',
     color: '#4DB6AC',
-    entityType: EntityType.NER,
+    entityType: 'NER',
   },
   {
     id: 3,
     name: 'Organisation',
     color: '#81C784',
-    entityType: EntityType.NER,
+    entityType: 'NER',
   },
   {
     id: 4,
     name: 'Date',
     color: '#AED581',
-    entityType: EntityType.NER,
+    entityType: 'NER',
   },
   {
     id: 5,
     name: 'Other',
     color: '#DCE775',
-    entityType: EntityType.NER,
+    entityType: 'NER',
   },
 ];
 
 const App = () => {
   const [selectedEntity, setSelectedEntity] = useState(-1);
   const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
-  const [textMap, setTextMap] = useState<Array<TextLayer>>([]);
+  const [textMap, setTextMap] = useState<any>([]);
   const childRef = useRef<AnnotatorHandle<typeof Annotator>>();
 
   return (
@@ -70,7 +69,6 @@ const App = () => {
               entity={entities[selectedEntity]}
               getAnnotations={setAnnotations}
               getTextMaps={setTextMap}
-              initialScale={1}
               ref={childRef}
             />
           </div>
