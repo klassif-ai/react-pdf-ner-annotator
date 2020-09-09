@@ -1,7 +1,10 @@
 {
   "name": "react-pdf-ner-annotator",
-  "version": "1.0.0",
-  "private": true,
+  "version": "1.0.0-alpha.2",
+  "private": false,
+  "files": [
+    "lib"
+  ],
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "dependencies": {
@@ -71,5 +74,20 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "react-scripts": "3.4.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaartenBloemen/react-pdf-ner-annotator.git"
+  },
+  "author": "Maarten Bloemen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MaartenBloemen/react-pdf-ner-annotator/issues"
+  },
+  "keywords": [
+    "react-component",
+    "typescript",
+    "PDF",
+    "NER"
+  ]
 }
