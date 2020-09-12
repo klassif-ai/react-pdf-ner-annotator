@@ -3,6 +3,7 @@ import lodash from 'lodash';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport, PDFPromise } from 'pdfjs-dist';
 import { generateRandomId } from '../helpers/generalHelpers';
+import { mergeSplitWords } from '../helpers/pdfHelpers';
 import { Entity } from '../interfaces/entity';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
@@ -110,7 +111,8 @@ const Page = ({
     if (inView && pdfPage && !textLayer) {
       pdfPage.getTextContent().then((content) => {
         if (content.items.length) {
-          buildTextLayer(content, pageViewport as PDFPageViewport);
+          const contentMerged = mergeSplitWords(content);
+          buildTextLayer(contentMerged, pageViewport as PDFPageViewport);
         } else {
           setStartOcr(true);
         }

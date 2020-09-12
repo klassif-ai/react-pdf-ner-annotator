@@ -1,7 +1,10 @@
 // @ts-ignore
+import lodash from 'lodash';
 import * as PdfJs from 'pdfjs-dist/build/pdf';
-import { TextContentItem } from 'pdfjs-dist';
+import { TextContent, TextContentItem } from 'pdfjs-dist';
 import { Rectangle } from 'tesseract.js';
+
+const MAX_ALLOWED_DISTANCE = 0.5;
 
 export const calculateTextProperties = (
   textItem: TextContentItem,
@@ -94,4 +97,42 @@ export const calculateRectangleProperties = (boundingBox: any): Rectangle => {
   const height = Math.sqrt(Math.pow(x1 - x1, 2) + Math.pow(y1 - y0, 2));
 
   return { left: x0, top: y0, width, height };
+};
+
+export const mergeSplitWords = (textContent: TextContent): TextContent => {
+  const { items } = textContent;
+  const mergedTextContent: TextContent  = {
+    ...textContent,
+    items: []
+  };
+
+  items.forEach((item) => {
+    let prevWidth = 0;
+    const sameLevel = items.filter((candidate) => {
+      if (filterByDistance(item, candidate, prevWidth)) {
+        prevWidth += candidate.width;
+        return true;
+      }
+      return false;
+    });
+    if (sameLevel.length) {
+      mergedTextContent.items.push({
+        ...item,
+        width: item.width + sameLevel.map((val) => val.width).reduce((a, b) => a + b, 0),
+        str: item.str + sameLevel.map((val) => val.str).join(''),
+      });
+      items.splice(0, items.length, ...items.filter((candidate) => !lodash.includes(sameLevel, candidate)));
+    } else {
+      mergedTextContent.items.push(item);
+    }
+  });
+
+  return mergedTextContent;
+};
+
+const filterByDistance = (current: TextContentItem, candidate: TextContentItem, addedWidth: number) => {
+  const distance = lodash.round(candidate.transform[4] - (current.transform[4] + current.width + addedWidth), 1);
+  return current.transform[5] === candidate.transform[5]
+    && current.transform[4] < candidate.transform[4]
+    && (distance >= -MAX_ALLOWED_DISTANCE && distance <= MAX_ALLOWED_DISTANCE);
 };

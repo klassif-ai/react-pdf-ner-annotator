@@ -20,7 +20,6 @@ import { TextLayer, TextLayerItem } from './interfaces/textLayer';
 interface Props {
   url?: string;
   data?: Uint8Array | BufferSource | string;
-  textLayer?: Array<TextLayer>;
   httpHeaders?: {
     [key: string]: string;
   };
@@ -37,7 +36,6 @@ interface Props {
 const Annotator = forwardRef(({
   url,
   data,
-  textLayer,
   httpHeaders,
   initialScale = 1.5,
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
@@ -75,12 +73,12 @@ const Annotator = forwardRef(({
   }, [annotations, textMap, initialTextMap, getAnnotations, getTextMaps]);
 
   const getTextLayerForPage = useCallback((page: number): Array<TextLayerItem> | undefined => {
-    if (textLayer) {
-      const found = textLayer.find((layer) => layer.page === page);
+    if (initialTextMap) {
+      const found = initialTextMap.find((layer) => layer.page === page);
       return found ? found.textMapItems : undefined;
     }
     return undefined;
-  }, [textLayer]);
+  }, [initialTextMap]);
 
   const renderPages = useMemo(() => {
     if (!url && !data) {
@@ -113,7 +111,7 @@ const Annotator = forwardRef(({
             removeAnnotation={deleteAnnotation}
             addPageToTextMap={addPageToTextMap}
             entity={entity}
-            initialTextLayer={getTextLayerForPage(index)}
+            initialTextLayer={getTextLayerForPage(pageNumber)}
           />
         );
       })
