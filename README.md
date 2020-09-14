@@ -1,7 +1,5 @@
 # react-pdf-ner-annotator
 
-[![npm package][npm-badge]][npm]
-
 A React component to annotate named entities directly onto a PDF.
 
 ## Features
