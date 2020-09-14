@@ -1,44 +1,47 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# react-pdf-ner-annotator
 
-## Available Scripts
+[![npm package][npm-badge]][npm]
 
-In the project directory, you can run:
+A React component to annotate named entities directly onto a PDF.
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Installation
+The package can be installed through NPM.
 
-### `npm test`
+``npm install react-pdf-ner-annotator``
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Usage
+For simple example usage you can refer to [example/src/App.tsx](https://github.com/MaartenBloemen/react-pdf-ner-annotator/blob/master/example/src/App.tsx).
 
-### `npm run build`
+```javascript
+import Annotator from 'react-pdf-ner-annotator';
+// import the css
+import 'react-pdf-ner-annotator/lib/css/style.css';
+// OR import the sass
+import 'react-pdf-ner-annotator/lib/scss/style.scss';
+<Annotator url={'http://example.pdf'} />
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Properties
+| Name               | Type                                     | Required                       | Default value                                             | Description                                                                                                                                                                                                                                  |
+|--------------------|------------------------------------------|--------------------------------|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| url                | `string`                                 | Either url or data is required | `undefined`                                               | The URL of the PDF\.                                                                                                                                                                                                                         |
+| data               | `Uint8Array` | `BufferSource` | `string` | Either data or url is required | `undefined`                                               | The PDF as binary or base64 encoded string\.                                                                                                                                                                                                 |
+| httpHeaders        | `{ [key: string]: string }`              | no                             | `undefined`                                               | Extra fields for in the HTTP header when for example authentication is needed\.                                                                                                                                                              |
+| initialScale       | `number`                                 | no                             | 1\.5                                                      | The initial scale to display the PDF as\. Must be between 1 and 2\.                                                                                                                                                                          |
+| tokenizer          | `RegExp`                                 | no                             | `new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g)`                  | A Regular expression for the tokenization of the paragraphs\.                                                                                                                                                                                |
+| disableOCR         | `boolean`                                | no                             | `false`                                                   | You can set this value to true if your PDF doesn't have a text layer and you don't want the frontend to run OCR\.                                                                                                                            |
+| entity             | `Entity`                                 | no                             | `undefined`                                               | The active [Entity](https://github.com/MaartenBloemen/react\-pdf\-ner\-annotator/blob/master/src/interfaces/entity\.ts\#L3\) to annotate on the PDF\.                                                                                        |
+| initialTextmap     | `Array<TextLayer>`                       | no                             | `undefined`                                               | A array of [TextLayer](https://github.com/MaartenBloemen/react\-pdf\-ner\-annotator/blob/master/src/interfaces/textLayer\.ts\#L17\) if you want to provide your own TextLayer for the PDF instead of letting the frontend generate one\.     |
+| defaultAnnotations | `Array<Annotation>`                      | no                             | `[]`                                                      | An array of [Annotation](https://github.com/MaartenBloemen/react\-pdf\-ner\-annotator/blob/master/src/interfaces/annotation\.ts\#L3\) to show on the PDF\.                                                                                   |
+| ref                | `ref`                                    | no                             | `undefined`                                               | A ref to pass to the Annotator, this ref can be used to call removeAnnotation.                                                                                                                                                               |
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Callback methods
+| Name           | Parameters                     | Return type | Required | Description                                                                                                                                                                                    |
+|----------------|--------------------------------|-------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| getAnnotations | annotations: Array<Annotation> | void        | yes      | Provide a method that takes an array of Annotation as input. This method can be the set of a useState hook for example. This is to subscribe to changes of the annotations made on the PDF. |
+| getTextMaps    | maps: Array<TextLayer>         | void        | no       | Same as the annotations but for the text layers. This will only return text layers of pages with annotations on them.                                                                        |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Local development

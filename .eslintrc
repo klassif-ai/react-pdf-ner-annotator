@@ -64,6 +64,7 @@
     "react/jsx-one-expression-per-line": "off",
     "react/jsx-wrap-multilines": "off",
     "react/destructuring-assignment": "off",
+    "react/require-default-props": "off",
     "jsx-a11y/interactive-supports-focus": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",

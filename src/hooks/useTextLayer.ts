@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { PDFPageViewport, TextContent } from 'pdfjs-dist';
-import sortBy from 'lodash/sortBy';
+import lodash from 'lodash';
 import { TextLayerItem } from '../interfaces/textLayer';
 import {
   calculateFontSize,
@@ -69,7 +69,7 @@ const useTextLayer = (scale: number, context: CanvasRenderingContext2D,  initial
         transform,
       };
     });
-    setTextLayer(sortBy(textResult, ['coords.top', 'coords.left']));
+    setTextLayer(lodash.sortBy(textResult, ['coords.top', 'coords.left']));
   }, [context, scale]);
 
   return { textLayer, buildTextLayer };

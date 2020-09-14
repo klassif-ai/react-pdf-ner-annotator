@@ -52,7 +52,7 @@ const App = () => {
   return (
     <div className="app-container">
       <div className="app__header">
-        <h1>Header</h1>
+        <h1>React PDF NER Annotator</h1>
       </div>
       <div className="app__content">
         <div className="app__content-wrapper">
