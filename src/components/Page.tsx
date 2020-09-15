@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import lodash from 'lodash';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport, PDFPromise } from 'pdfjs-dist';
-import { generateRandomId } from '../helpers/generalHelpers';
+import { generateRandomId, getTextMetrics } from '../helpers/generalHelpers';
 import { mergeSplitWords } from '../helpers/pdfHelpers';
 import { Entity } from '../interfaces/entity';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
@@ -206,19 +206,25 @@ const Page = ({
     if (canvasRef && textLayer && inView) {
       let lastIndex = 0;
       return textLayer.map((item) => {
-
         const { text, coords, fontFamily, fontSize, transform } = item;
-        const matches = lodash.deburr(text).match(tokenizer)!;
+        const metrics = getTextMetrics(text, 12)
 
+        const scale = {
+          'x': coords.width/metrics.width,
+          'y': coords.height/metrics.height
+        }
+
+        const matches = lodash.deburr(text).match(tokenizer)!;
         const token = (
           <span
             className="token-container"
             style={{
               left: `${coords.left}px`,
               top: `${coords.top}px`,
-              fontSize: `${fontSize}px`,
-              fontFamily: `${fontFamily}`,
-              transform: `scaleX(${transform})`,
+              width: `${coords.width}px`,
+              height: `${coords.height}px`,
+              fontSize: `${12}px`,
+              transform: `scale(${scale.x}, ${scale.y})`,
             }}
             key={generateRandomId(7)}
           >

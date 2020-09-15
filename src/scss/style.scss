@@ -167,16 +167,6 @@
   }
 }
 
-.mark-container {
-  opacity: 0.5;
-  cursor: pointer;
-  position: relative;
-
-  .mark__token {
-    color: transparent;
-  }
-}
-
 .ocr-info-container {
   position: absolute;
   top: 10px;
@@ -202,8 +192,54 @@
   }
 }
 
+.page {
+  display: flex;
+  justify-content: center;
+
+  &:not(:last-child) {
+    padding-bottom: 40px;
+  }
+
+  .page__container {
+    position: relative;
+
+    .page__canvas-container {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    }
+
+    .page__text-layer-container {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      line-height: 1.0;
+
+      .token-container {
+        position: absolute;
+        display: inline;
+        white-space: pre;
+        cursor: inherit;
+        transform-origin: 0 0;
+      }
+    }
+  }
+}
+
+.mark-container {
+  opacity: .5;
+  cursor: pointer;
+  position: relative;
+
+  .mark__token {
+    color: transparent;
+  }
+}
+
 .token__text-item {
   color: transparent;
+  white-space: nowrap; /* Thanks to Herb Caudill comment */
 }
 
 .selection-container {
@@ -258,39 +294,5 @@
     top: 110%;
     left: 0;
     opacity: 0.65;
-  }
-}
-
-.page {
-  display: flex;
-  justify-content: center;
-
-  &:not(:last-child) {
-    padding-bottom: 40px;
-  }
-
-  .page__container {
-    position: relative;
-
-    .page__canvas-container {
-      box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-    }
-
-    .page__text-layer-container {
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      overflow: hidden;
-      line-height: 1.0;
-
-      .token-container {
-        position: absolute;
-        white-space: pre;
-        cursor: inherit;
-        transform-origin: 0 0;
-      }
-    }
   }
 }

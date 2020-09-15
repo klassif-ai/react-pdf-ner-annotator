@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import useMouse from '@react-hook/mouse-position';
 import { Rectangle } from 'tesseract.js';
 import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../helpers/selectionHelpers';
+import { getScale } from '../helpers/generalHelpers';
 import { AnnotationParams } from '../interfaces/annotation';
 import { Entity } from '../interfaces/entity';
 import { Point } from '../interfaces/point';
@@ -90,9 +91,10 @@ const Selection = ({
       };
 
       intersects.forEach((intersect) => {
+        const offsetScale = getScale(intersect.style.transform)
         const offsetX = intersect.offsetLeft;
         const offsetY = intersect.offsetTop;
-        findIntersectingChildren(intersect.children, coordsToUse, offsetX, offsetY).forEach((child, index) => {
+        findIntersectingChildren(intersect.children, coordsToUse, offsetX, offsetY, offsetScale).forEach((child, index) => {
           const dataI = child.getAttribute('data-i');
           if (dataI) {
             markToAdd.tokens.push(child.textContent);
