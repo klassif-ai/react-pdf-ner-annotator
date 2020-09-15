@@ -11,14 +11,14 @@ interface Props {
 
 const Mark = ({ token, annotation, removeAnnotation }: Props)  => {
   return (
-    <span
+    <mark
       className="mark-container"
       onClick={() => removeAnnotation(annotation.id)}
       style={{
         backgroundColor: annotation.entity.color,
       }}>
       <span className="mark__token">{ token }</span>
-    </span>
+    </mark>
   );
 };
 

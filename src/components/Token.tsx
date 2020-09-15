@@ -9,7 +9,7 @@ interface Props {
 const Token = ({ token, dataI }: Props) => {
   const renderToken = () => {
     if (dataI) {
-      var token_span = (
+      return (
         <span
           data-i={dataI}
           className="token__text-item"
@@ -17,8 +17,6 @@ const Token = ({ token, dataI }: Props) => {
           {token}
         </span>
       );
-
-      return token_span;
     }
     return <span className="token__text-item">{token}</span>;
   };

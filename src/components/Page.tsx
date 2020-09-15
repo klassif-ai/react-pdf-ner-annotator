@@ -236,6 +236,7 @@ const Page = ({
         return token;
       });
     }
+    setLoading(false);
     return null;
   }, [tokenizer, textLayer, canvasRef, inView, renderTokens]);
 

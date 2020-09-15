@@ -15,15 +15,16 @@ export const getTextMetrics = (text: string, fontSize: number) => {
 }
 
 export const getScale = (transform: string) => {
-	var scale = {
-    'x': 1,
-    'y': 1
-  }
-  if (transform){
-    transform = transform.replace("scale(", "")
-    var scales = transform.split(",");
-    scale.x = parseFloat(scales[0])
-    scale.y = parseFloat(scales[1])
-  }
-	return scale;
-}
+	if (transform){
+		transform = transform.replace("scale(", "")
+		const scales = transform.split(",");
+		return {
+			'x': parseFloat(scales[0]),
+			'y': parseFloat(scales[1])
+		}
+	}
+
+	return {
+		'x': 1,
+		'y': 1};
+	}

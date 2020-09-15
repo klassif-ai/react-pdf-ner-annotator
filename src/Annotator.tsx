@@ -37,7 +37,7 @@ const Annotator = forwardRef(({
   url,
   data,
   httpHeaders,
-  initialScale = 2,
+  initialScale = 1.5,
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
   disableOCR = false,
   entity,
