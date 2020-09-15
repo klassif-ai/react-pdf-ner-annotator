@@ -19,6 +19,7 @@
     "build": "rimraf lib && tsc -p ./ --declaration --outDir lib/ && npm run sass-compile && npm run copy",
     "sass-compile": "node-sass  -r src/scss -o lib/css",
     "copy": "copyfiles -u 1 \"./src/**/*{.svg,scss,js}\" \"lib\"",
+    "postinstall": "cd example && npm install",
     "test": "react-scripts test"
   },
   "eslintConfig": {
