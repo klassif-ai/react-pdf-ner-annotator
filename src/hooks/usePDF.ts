@@ -49,6 +49,9 @@ const usePDF = ({ url, data, httpHeaders }: Props) => {
     }
 
     if (pdfParams) {
+      setPages(0);
+      setDocument(null);
+      setError(false);
       PdfJs.getDocument({
         url,
         httpHeaders,
