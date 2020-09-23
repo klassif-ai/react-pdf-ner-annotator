@@ -19,7 +19,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
   }, [annotations]);
 
   const removeAnnotation = useCallback((id) => {
-    // let remainingAnnotations = annotations.filter((a) => a.id.toString() !== id.toString())
+    if (typeof id === 'number') id = id.toString()
     const remainingAnnotations = annotations.filter((a) => !id.includes(a.id.toString()))
     setAnnotations(remainingAnnotations)
   }, [annotations]);

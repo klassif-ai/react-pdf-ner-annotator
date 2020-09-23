@@ -61,7 +61,7 @@ const Annotator = forwardRef(({
   const { textMap, addPageToTextMap } = useTextMap(annotations);
 
   useImperativeHandle(ref, () => ({ removeAnnotation }));
-  const removeAnnotation = (id: string) => {
+  const removeAnnotation = (id) => {
     deleteAnnotation(id);
   };
 
