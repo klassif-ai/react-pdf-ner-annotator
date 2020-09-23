@@ -19,7 +19,7 @@ const baseHeaders = {
 
 const usePDF = ({ url, data, httpHeaders }: Props) => {
   PdfJs.GlobalWorkerOptions.workerSrc = PdfWorker;
-
+  const [prevUrl, setPrevUrl] = useState(null);
   const [pages, setPages] = useState(0);
   const [document, setDocument] = useState<PDFDocumentProxy|null>(null);
   const [error, setError] = useState(false);
@@ -54,6 +54,10 @@ const usePDF = ({ url, data, httpHeaders }: Props) => {
         httpHeaders,
       }).promise
         .then((pdf: PDFDocumentProxy) => {
+          if (prevUrl && url !== prevUrl){
+            setPages(0);
+            setDocument(null);
+          }
           setPages(pdf.numPages);
           setDocument(pdf);
           setError(false);
@@ -64,6 +68,7 @@ const usePDF = ({ url, data, httpHeaders }: Props) => {
           setError(true);
         });
     }
+    setPrevUrl(url)
   }, [url, data, httpHeaders]);
 
   const fetchPage = useCallback((index: number): PDFPromise<PDFPageProxy>|null => {

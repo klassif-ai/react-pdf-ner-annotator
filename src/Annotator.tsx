@@ -39,7 +39,7 @@ const Annotator = forwardRef(({
   httpHeaders,
   initialScale = 1.5,
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
-  disableOCR = false,
+  disableOCR = true,
   entity,
   initialTextMap,
   defaultAnnotations = [],
@@ -49,19 +49,25 @@ const Annotator = forwardRef(({
   const [scale, setScale] = useState(initialScale);
 
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders });
+
   const {
     annotations,
+    setAnnotations,
     getAnnotationsForPage,
     addAnnotation,
     removeAnnotation: deleteAnnotation
   } = useAnnotations(defaultAnnotations);
+
   const { textMap, addPageToTextMap } = useTextMap(annotations);
 
   useImperativeHandle(ref, () => ({ removeAnnotation }));
-
   const removeAnnotation = (id: string) => {
     deleteAnnotation(id);
   };
+
+  useEffect(() => {
+    setAnnotations(defaultAnnotations)
+  }, [defaultAnnotations])
 
   useEffect(() => {
     if (getAnnotations) {
@@ -81,6 +87,7 @@ const Annotator = forwardRef(({
   }, [initialTextMap]);
 
   const renderPages = useMemo(() => {
+    console.log('-- Render pages')
     if (!url && !data) {
       return (
         <Error

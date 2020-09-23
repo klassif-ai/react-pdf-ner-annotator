@@ -18,14 +18,13 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
     setAnnotations(newAnnotations);
   }, [annotations]);
 
-  const removeAnnotation = useCallback((id: string) => {
-    const index = annotations.findIndex(a => a.id === id);
-    if (index !== -1) {
-      setAnnotations(annotations.filter((_, i) => i !== index));
-    }
+  const removeAnnotation = useCallback((id) => {
+    // let remainingAnnotations = annotations.filter((a) => a.id.toString() !== id.toString())
+    const remainingAnnotations = annotations.filter((a) => !id.includes(a.id.toString()))
+    setAnnotations(remainingAnnotations)
   }, [annotations]);
 
-  return { annotations, getAnnotationsForPage, addAnnotation, removeAnnotation };
+  return { annotations, setAnnotations, getAnnotationsForPage, addAnnotation, removeAnnotation };
 };
 
 export default useAnnotations;
