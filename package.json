@@ -1,6 +1,6 @@
 {
   "name": "react-pdf-ner-annotator",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.7",
   "private": false,
   "files": [
     "lib"
@@ -19,7 +19,6 @@
     "build": "rimraf lib && tsc -p ./ --declaration --outDir lib/ && npm run sass-compile && npm run copy",
     "sass-compile": "node-sass  -r src/scss -o lib/css",
     "copy": "copyfiles -u 1 \"./src/**/*{.svg,scss,js}\" \"lib\"",
-    "postinstall": "cd example && npm install",
     "test": "react-scripts test"
   },
   "eslintConfig": {

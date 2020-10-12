@@ -25,6 +25,10 @@ const usePDF = ({ url, data, httpHeaders }: Props) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    setPages(0);
+    setDocument(null);
+    setError(true);
+
     let pdfParams;
     if (url) {
       pdfParams = {
@@ -35,27 +39,14 @@ const usePDF = ({ url, data, httpHeaders }: Props) => {
         }
       };
     } else if (data) {
-      pdfParams = {
-        url,
-        httpHeaders: {
-          ...baseHeaders,
-          ...httpHeaders,
-        }
-      };
-    } else {
-      setPages(0);
-      setDocument(null);
-      setError(true);
+      pdfParams = data;
     }
 
     if (pdfParams) {
       setPages(0);
       setDocument(null);
       setError(false);
-      PdfJs.getDocument({
-        url,
-        httpHeaders,
-      }).promise
+      PdfJs.getDocument(pdfParams).promise
         .then((pdf: PDFDocumentProxy) => {
           setPages(pdf.numPages);
           setDocument(pdf);
