@@ -76,5 +76,17 @@
     background-color: #24292e;
     color: #fff;
     z-index: 3;
+
+    .app__footer-logo {
+      padding-top: 7px;
+      width: auto;
+      height: 35px;
+      margin-left: 10px;
+      transition: .2s;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
   }
 }

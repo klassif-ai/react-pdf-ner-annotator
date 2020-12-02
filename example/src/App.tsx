@@ -4,11 +4,41 @@ import Annotator from 'react-pdf-ner-annotator';
 import { Entity } from 'react-pdf-ner-annotator/src/interfaces/entity';
 import { Annotation } from 'react-pdf-ner-annotator/src/interfaces/annotation';
 import { AnnotatorHandle } from 'react-pdf-ner-annotator/src/types';
+import PDFFile from './pdfs/order.pdf';
+import KlassifaiLogo from './klassifai.svg';
 import './App.scss';
 import 'react-pdf-ner-annotator/src/scss/style.scss';
 
-const url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
-const scannedUrl = 'https://jeroen.github.io/images/ocrscan.pdf';
+const defaultAnnotations: Array<Annotation> = [
+  {
+    'id': 'czj6p188jb',
+    'page': 1,
+    'tokens': ['#', 'PO002848'],
+    'textIds': [16, 17],
+    'entity': { 'id': 5, 'name': 'Reference', 'color': '#DCE775', 'entityType': 'NER' },
+  },
+  {
+    'id': 'v7rymcccdg',
+    'page': 1,
+    'tokens': ['Brainjar', 'nv'],
+    'textIds': [1, 2],
+    'entity': { 'id': 3, 'name': 'Organisation', 'color': '#81C784', 'entityType': 'NER' },
+  },
+  {
+    'id': '74s33l7zzu',
+    'page': 1,
+    'tokens': ['Gaston', 'Geenslaan', '11', 'B4', '3001', 'Leuven', 'Belgie'],
+    'textIds': [3, 4, 5, 6, 7, 8, 9],
+    'entity': { 'id': 1, 'name': 'Location', 'color': '#4DD0E1', 'entityType': 'NER' },
+  },
+  {
+    'id': 'yq4giluopu',
+    'page': 1,
+    'tokens': ['10/08/2021'],
+    'textIds': [32],
+    'entity': { 'id': 4, 'name': 'Date', 'color': '#AED581', 'entityType': 'NER' },
+  },
+];
 
 const entities: Array<Entity> = [
   {
@@ -37,8 +67,14 @@ const entities: Array<Entity> = [
   },
   {
     id: 5,
-    name: 'Other',
+    name: 'Reference',
     color: '#DCE775',
+    entityType: 'NER',
+  },
+  {
+    id: 6,
+    name: 'Other',
+    color: '#FF8A65',
     entityType: 'NER',
   },
 ];
@@ -65,7 +101,8 @@ const App = () => {
           </div>
           <div className="app__content-main">
             <Annotator
-              url={url}
+              data={PDFFile}
+              defaultAnnotations={defaultAnnotations}
               entity={entities[selectedEntity]}
               getAnnotations={setAnnotations}
               getTextMaps={setTextMap}
@@ -96,7 +133,13 @@ const App = () => {
         </div>
       </div>
       <div className="app__footer">
-        <h1>Footer</h1>
+        <h1>Made by</h1>
+        <a href="https://www.klassif.ai/">
+          <img
+            className="app__footer-logo"
+            src={KlassifaiLogo}
+            alt="Klassif.ai logo"/>
+        </a>
       </div>
     </div>
   );
