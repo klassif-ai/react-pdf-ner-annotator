@@ -43,3 +43,6 @@ import 'react-pdf-ner-annotator/lib/scss/style.scss';
 | getTextMaps    | maps: Array<TextLayer>         | void        | no       | Same as the annotations but for the text layers. This will only return text layers of pages with annotations on them.                                                                          |
 
 ## Local development
+
+## Contributors
+* [Maarten Bloemen](https://github.com/MaartenBloemen)
