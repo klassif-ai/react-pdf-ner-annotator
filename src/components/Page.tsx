@@ -1,23 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import lodash from 'lodash';
+import React, { useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { PDFPageProxy, PDFPageViewport, PDFPromise } from 'pdfjs-dist';
-import { generateRandomId } from '../helpers/generalHelpers';
+import { PDFPageProxy, PDFPageViewport } from 'pdfjs-dist';
 import { mergeSplitWords } from '../helpers/pdfHelpers';
 import { Entity } from '../interfaces/entity';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
 import useTesseract from '../hooks/useTesseract';
 import useTextLayer from '../hooks/useTextLayer';
-import Mark from './Mark';
-import Token from './Token';
 import Selection from './Selection';
 import OcrInfo from './OcrInfo';
 import Loader from './Loader';
+import TextLayer from './TextLayer';
 
 interface Props {
   pageNumber: number;
-  page: PDFPromise<PDFPageProxy>|null;
+  page: Promise<PDFPageProxy>|null;
   scale: number;
   tokenizer: RegExp;
   disableOCR: boolean;
@@ -121,118 +118,6 @@ const Page = ({
     }
   }, [inView, pdfPage, pageViewport, context, page, textLayer, buildTextLayer]);
 
-  const renderOcrText = useMemo(() => {
-    if (ocrResult) {
-      return ocrResult.ocrWords.map((ocrWord, index) => {
-        const dataI = index + 1;
-        const annotation = annotations.find((a) => a.textIds.includes(dataI));
-        return (
-          <span
-            className="token-container"
-            style={{
-              left: `${ocrWord.coords.left}px`,
-              top: `${ocrWord.coords.top}px`,
-              width: `${ocrWord.coords.width}px`,
-              height: `${ocrWord.coords.height}px`,
-              fontSize: `${ocrWord.fontSize}px`,
-              transform: `scaleX(${ocrWord.transform})`,
-            }}
-            key={generateRandomId(7)}
-          >
-            {
-              annotation ? (
-                <Mark
-                  token={ocrWord.text}
-                  annotation={annotation}
-                  removeAnnotation={removeAnnotation}
-                />
-              ) : (
-                <Token token={ocrWord.text} dataI={dataI} />
-              )
-            }
-          </span>
-        );
-      });
-    }
-    return null;
-  }, [ocrResult, annotations, removeAnnotation]);
-
-  const renderTokens = useCallback((tokens: Array<string>, lastIndex: number) => {
-    let index = 0;
-    let markAsSpace: Annotation | null = null;
-    return tokens.map((token) => {
-      if (token !== ' ') {
-        index += 1;
-        const dataI = lastIndex + index;
-        const annotation = annotations.find((a) => a.textIds.includes(dataI));
-
-        if (annotation) {
-          if (annotation.textIds[annotation.textIds.length - 1] !== dataI) {
-            markAsSpace = annotation;
-          }
-          return (
-            <Mark
-              token={token}
-              annotation={annotation}
-              removeAnnotation={removeAnnotation}
-              key={generateRandomId(7)}
-            />
-          );
-        }
-
-        return <Token token={token} dataI={dataI} key={generateRandomId(7)} />;
-      }
-
-      let space;
-      if (markAsSpace) {
-        space = (
-          <Mark
-            token={token}
-            annotation={markAsSpace}
-            removeAnnotation={removeAnnotation}
-            key={generateRandomId(7)}
-          />
-        );
-        markAsSpace = null;
-      } else {
-        space = <Token token={token} key={generateRandomId(7)} />;
-      }
-
-      return space;
-    });
-  }, [annotations, removeAnnotation]);
-
-  const renderText = useMemo(() => {
-    if (canvasRef && textLayer && inView) {
-      let lastIndex = 0;
-      return textLayer.map((item) => {
-
-        const { text, coords, fontFamily, fontSize, transform } = item;
-        const matches = lodash.deburr(text).match(tokenizer)!;
-
-        const token = (
-          <span
-            className="token-container"
-            style={{
-              left: `${coords.left}px`,
-              top: `${coords.top}px`,
-              fontSize: `${fontSize}px`,
-              fontFamily: `${fontFamily}`,
-              transform: `scaleX(${transform})`,
-            }}
-            key={generateRandomId(7)}
-          >
-            { renderTokens(matches, lastIndex) }
-          </span>
-        );
-
-        lastIndex += matches.filter((t) => t !== ' ').length;
-        return token;
-      });
-    }
-    return null;
-  }, [tokenizer, textLayer, canvasRef, inView, renderTokens]);
-
   return (
     <div className="page" ref={inViewRef}>
       <div
@@ -256,9 +141,18 @@ const Page = ({
           entity={entity}
           addAnnotation={addAnnotation}
         >
-          { renderText }
-          { renderOcrText }
-          <OcrInfo loading={ocrLoading} message={message} error={ocrError} />
+          <TextLayer
+            inView={inView}
+            canvasInitialized={!!canvasRef}
+            isAnnotating={!!entity}
+            textLayer={textLayer || ocrResult?.ocrWords}
+            tokenizer={tokenizer}
+            annotations={annotations}
+            removeAnnotation={removeAnnotation}
+          />
+          <div className="ocr-info-container">
+            <OcrInfo loading={ocrLoading} message={message} error={ocrError} />
+          </div>
         </Selection>
       </div>
     </div>

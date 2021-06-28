@@ -9,9 +9,9 @@ export interface TextLayerItem {
   dataI?: number;
   coords: Rectangle;
   text: string;
-  fontSize: number;
-  fontFamily: string;
-  transform: number;
+  fontSize?: number;
+  fontFamily?: string;
+  transform?: number;
 }
 
 export interface TextLayer {

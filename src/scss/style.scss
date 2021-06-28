@@ -204,6 +204,9 @@
 
 .token__text-item {
   color: transparent;
+  &.annotatable {
+    border: 1px solid black;
+  }
 }
 
 .selection-container {

@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import useMouse from '@react-hook/mouse-position';
 import { Rectangle } from 'tesseract.js';
 import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../helpers/selectionHelpers';
 import { AnnotationParams } from '../interfaces/annotation';
 import { Entity } from '../interfaces/entity';
 import { Point } from '../interfaces/point';
+import SelectionRectangle from './SelectionRectangle';
 
 interface Props {
   pageNumber: number;
@@ -32,7 +33,7 @@ const Selection = ({
   const [mouseCoords, setMouseCoords] = useState<Point>({ x: 0, y: 0 });
   const [coords, setCoords] = useState(initialCoords);
 
-  const mode = () => {
+  const mode = useMemo(() => {
     if (entity && isDragging) {
       return 'annotating-mode';
     }
@@ -41,39 +42,32 @@ const Selection = ({
     }
 
     return 'text-selection-mode';
-  };
+  }, [entity, isDragging]);
 
-  const handleKeyEvent = (event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'Escape': {
-        if (isDragging) {
-          setIsDragging(false);
-          setMouseCoords({ x: 0, y: 0 });
-          setCoords(initialCoords);
-        }
-        break;
-      }
-      default:
-        break;
+  const handleKeyEvent = useCallback((event: KeyboardEvent) => {
+    if (event.key.toLowerCase() === 'escape' && isDragging) {
+      setIsDragging(false);
+      setMouseCoords({ x: 0, y: 0 });
+      setCoords(initialCoords);
     }
-  };
+  }, [isDragging]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyEvent, false);
     return () => {
       document.removeEventListener('keydown', handleKeyEvent, false);
     };
-  });
+  }, [handleKeyEvent]);
 
-  const handleMouseDown = () => {
+  const handleMouseDown = useCallback(() => {
     if (entity) {
       const { x, y } = mouse;
       setMouseCoords({ x: x!, y: y! });
       setIsDragging(true);
     }
-  };
+  }, [entity, mouse]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (selectionRef && entity) {
       let coordsToUse = coords;
       if (isCoordsEmpty(coords)) {
@@ -109,43 +103,26 @@ const Selection = ({
     setIsDragging(false);
     setMouseCoords({ x: 0, y: 0 });
     setCoords(initialCoords);
-  };
+  }, [selectionRef, coords, mouse, pageNumber, entity, addAnnotation]);
 
-  const handleMouseMove = () => {
+  const handleMouseMove = useCallback(() => {
     if (isDragging && entity) {
       const { x, y } = mouse;
       setCoords(calculateSelectionRectangle(mouseCoords, { x: x!, y: y! }));
     }
-  };
-
-  const renderSelectionRectangle = useMemo(() => {
-    const visibility = isDragging ? 'visible' : 'hidden';
-    return (
-      <span
-        data-ignore={true}
-        className="selection__rectangle"
-        style={{
-          visibility,
-          left: `${coords.left}px`,
-          top: `${coords.top}px`,
-          width: `${coords.width}px`,
-          height: `${coords.height}px`,
-        }}
-      />
-    );
-  }, [coords, isDragging]);
+  }, [isDragging, entity, mouse, mouseCoords]);
 
   return (
     <div
       role="document"
       ref={selectionRef}
-      className={`selection-container ${className} ${mode()}`}
+      className={`selection-container ${className} ${mode}`}
       style={style}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
-      { renderSelectionRectangle }
+      <SelectionRectangle isDragging={isDragging} coordinates={coords} />
       { children }
     </div>
   );

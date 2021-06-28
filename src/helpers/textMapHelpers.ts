@@ -25,7 +25,7 @@ export const buildTextMapFromTextLayer = (
               top: coords.height,
               width: textWidth,
               height: coords.height,
-            }
+            },
           });
         }
         offset += textWidth;
@@ -49,4 +49,17 @@ const calculateTextWidth = (text: string, fontSize: number, fontFamily: string, 
   context!.font = `${fontSize}px ${fontFamily}`;
   const metrics = context!.measureText(text);
   return metrics.width * transform;
+};
+
+export const getTextMetrics = (text: string) => {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context!.font = '12px sans-serif';
+  const metrics = context!.measureText(text);
+  const lineHeight = 1.5 * context.measureText('M').width;
+
+  return {
+    'width': metrics.width,
+    'height': lineHeight,
+  };
 };

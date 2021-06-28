@@ -1,6 +1,6 @@
 {
   "name": "react-pdf-ner-annotator",
-  "version": "1.0.0-alpha.8",
+  "version": "1.0.0",
   "private": false,
   "files": [
     "lib"
@@ -15,6 +15,7 @@
     "tesseract.js": "^2.1.1"
   },
   "scripts": {
+    "start-development": "npm start",
     "start": "npm run build && npm start --prefix example",
     "build": "rimraf lib && tsc -p ./ --declaration --outDir lib/ && npm run sass-compile && npm run copy",
     "sass-compile": "node-sass  -r src/scss -o lib/css",
@@ -43,7 +44,7 @@
     "@types/jest": "^24.9.1",
     "@types/lodash": "^4.14.159",
     "@types/node": "^12.12.54",
-    "@types/pdfjs-dist": "^2.1.5",
+    "@types/pdfjs-dist": "^2.7.1",
     "@types/react": "^16.9.44",
     "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "3.8.0",

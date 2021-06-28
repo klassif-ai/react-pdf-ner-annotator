@@ -80,52 +80,55 @@ const Annotator = forwardRef(({
     return undefined;
   }, [initialTextMap]);
 
-  const renderPages = useMemo(() => {
-    if (!url && !data) {
-      return (
-        <Error
-          message="You need to provide either valid PDF data or a URL to a PDF"
-        />
-      );
-    }
-
-    if (error) {
-      return <Error />;
-    }
-
+  if (!url && !data) {
     return (
-      Array(pages).fill(0).map((_, index) => {
-        const key = `pdf-page-${index}`;
-        const pageNumber = index + 1;
-        const page = fetchPage(pageNumber);
-        return (
-          <Page
-            page={page}
-            scale={scale}
-            key={key}
-            tokenizer={tokenizer}
-            disableOCR={disableOCR}
-            pageNumber={pageNumber}
-            annotations={getAnnotationsForPage(pageNumber)}
-            addAnnotation={addAnnotation}
-            removeAnnotation={deleteAnnotation}
-            addPageToTextMap={addPageToTextMap}
-            entity={entity}
-            initialTextLayer={getTextLayerForPage(pageNumber)}
-          />
-        );
-      })
+      <div className="annotator-container">
+        <div className="annotator-pages-container">
+          <div className="annotator-pages">
+            <Error message="You need to provide either valid PDF data or a URL to a PDF" />
+          </div>
+        </div>
+      </div>
     );
-  }, [
-    url, data, pages, error, scale, tokenizer, disableOCR, entity,
-    fetchPage, getAnnotationsForPage, addAnnotation, deleteAnnotation, addPageToTextMap, getTextLayerForPage,
-  ]);
+  }
+
+  if (error) {
+    return (
+      <div className="annotator-container">
+        <div className="annotator-pages-container">
+          <div className="annotator-pages">
+            <Error />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="annotator-container">
       <div className="annotator-pages-container">
         <div className="annotator-pages">
-          { renderPages }
+          {Array(pages).fill(0).map((_, index) => {
+            const key = `pdf-page-${index}`;
+            const pageNumber = index + 1;
+            const page = fetchPage(pageNumber);
+            return (
+              <Page
+                page={page}
+                scale={scale}
+                key={key}
+                tokenizer={tokenizer}
+                disableOCR={disableOCR}
+                pageNumber={pageNumber}
+                annotations={getAnnotationsForPage(pageNumber)}
+                addAnnotation={addAnnotation}
+                removeAnnotation={deleteAnnotation}
+                addPageToTextMap={addPageToTextMap}
+                entity={entity}
+                initialTextLayer={getTextLayerForPage(pageNumber)}
+              />
+            );
+          })}
         </div>
       </div>
       <ButtonGroup scale={scale} setScale={setScale} />
