@@ -4,6 +4,7 @@ import { TextLayerItem } from '../interfaces/textLayer';
 import { generateRandomId } from '../helpers/generalHelpers';
 import TokenContainer from './TokenContainer';
 import { Annotation } from '../interfaces/annotation';
+import hash from 'object-hash';
 
 interface Props {
   inView: boolean;
@@ -21,13 +22,13 @@ const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokeniz
     return (
       <>
         {
-          textLayer.map((textLayerItem, index) => {
+          textLayer.map((textLayerItem) => {
             const tokens = deburr(textLayerItem.text).match(tokenizer);
             const filteredTokenLength = tokens.filter((t) => t !== ' ').length;
             offset += filteredTokenLength;
             return (
               <TokenContainer
-                key={generateRandomId(7)}
+                key={hash(textLayerItem)}
                 isAnnotating={isAnnotating}
                 textLayerItem={textLayerItem}
                 tokens={tokens}

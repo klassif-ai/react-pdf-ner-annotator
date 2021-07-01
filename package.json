@@ -1,6 +1,6 @@
 {
   "name": "react-pdf-ner-annotator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "files": [
     "lib"
@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-hook/mouse-position": "^4.1.0",
     "lodash": "^4.17.20",
+    "object-hash": "^2.2.0",
     "pdfjs-dist": "2.4.456",
     "react-intersection-observer": "^8.26.2",
     "tesseract.js": "^2.1.1"

@@ -56,7 +56,7 @@ export const getTextMetrics = (text: string) => {
   const context = canvas.getContext('2d');
   context!.font = '12px sans-serif';
   const metrics = context!.measureText(text);
-  const lineHeight = 1.5 * context.measureText('M').width;
+  const lineHeight = 1.2 * context.measureText('M').width;
 
   return {
     'width': metrics.width,

@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
-import deburr from 'lodash/deburr';
 import { TextLayerItem } from '../interfaces/textLayer';
 import { getTextMetrics } from '../helpers/textMapHelpers';
 import Token from './Token';
-import { generateRandomId } from '../helpers/generalHelpers';
 import { Annotation } from '../interfaces/annotation';
 import Mark from './Mark';
+import { isBetween } from '../helpers/generalHelpers';
 
 interface Props {
   isAnnotating: boolean;
@@ -18,8 +17,8 @@ interface Props {
 
 const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotations, removeAnnotation }: Props) => {
   let index = 0;
-  // TODO determine whether to use just coords or more complex info
-  const { text, coords, fontSize, transform, fontFamily } = textLayerItem;
+  let spaceAsMark = false;
+  const { text, coords } = textLayerItem;
 
   const metrics = useMemo(() => getTextMetrics(text), [text]);
   const scale = useMemo(() => ({
@@ -27,31 +26,50 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
     'y': coords.height/metrics.height
   }), [metrics, coords]);
 
+  const style = useMemo(() => {
+    const { coords, fontSize, transform, fontFamily } = textLayerItem;
+
+    if (fontSize && transform && fontFamily) {
+      return {
+        left: `${coords.left}px`,
+        top: `${coords.top}px`,
+        fontSize: `${fontSize}px`,
+        fontFamily: `${fontFamily}`,
+        transform: `scaleX(${transform})`,
+      };
+    }
+
+    return {
+      left: `${coords.left}px`,
+      top: `${coords.top}px`,
+      width: `${coords.width}px`,
+      height: `${coords.height}px`,
+      font: '12px sans-serif',
+      transform: `scale(${scale.x}, ${scale.y})`,
+    };
+  }, [textLayerItem, metrics, scale]);
+
   return (
     <span
       className="token-container"
-      style={{
-        left: `${coords.left}px`,
-        top: `${coords.top}px`,
-        width: `${coords.width}px`,
-        height: `${coords.height}px`,
-        font: '12px sans-serif',
-        transform: `scale(${scale.x}, ${scale.y})`,
-      }}
+      style={style}
     >
       {
-        tokens.map((token) => {
+        tokens.map((token, keyIndex) => {
           const dataI = textLayerItem.dataI || (offset + index + 1);
           const annotation = annotations.find((a) => a.textIds.includes(dataI));
-          if (annotation) {
-            return (
-              <Mark token={token} annotation={annotation} removeAnnotation={removeAnnotation} />
-            );
-          }
+          const tokenIndexIsNotFirstOrLast = isBetween(keyIndex, 0, tokens.length - 1);
+
           if (token === ' ') {
+            if (annotation && spaceAsMark && tokenIndexIsNotFirstOrLast) {
+              spaceAsMark = false;
+              return (
+                <Mark key={keyIndex} token={token} annotation={annotation} removeAnnotation={removeAnnotation} />
+              );
+            }
             return (
               <Token
-                key={generateRandomId(7)}
+                key={keyIndex}
                 isAnnotating={isAnnotating}
                 token={token}
               />
@@ -59,9 +77,17 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
           }
 
           index += 1;
+
+          if (annotation) {
+            spaceAsMark = true;
+            return (
+              <Mark key={keyIndex} token={token} annotation={annotation} removeAnnotation={removeAnnotation} />
+            );
+          }
+
           return (
             <Token
-              key={generateRandomId(7)}
+              key={keyIndex}
               isAnnotating={isAnnotating}
               token={token}
               dataI={dataI}

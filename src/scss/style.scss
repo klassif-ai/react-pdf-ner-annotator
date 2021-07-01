@@ -286,11 +286,11 @@
       right: 0;
       bottom: 0;
       overflow: hidden;
-      line-height: 1.0;
+      line-height: 1.2;
 
       .token-container {
         position: absolute;
-        white-space: pre;
+        white-space: pre-wrap;
         cursor: inherit;
         transform-origin: 0 0;
       }
