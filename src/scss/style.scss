@@ -16,7 +16,19 @@
 }
 
 .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
+  .error-image {
+    width: 100px;
+    height: 100px;
+    padding: 20px;
+  }
+
+  .error-message {
+    color: white;
+  }
 }
 
 .fab-group-container {
@@ -171,6 +183,7 @@
   opacity: 0.5;
   cursor: pointer;
   position: relative;
+  padding: 0;
 
   .mark__token {
     color: transparent;
@@ -293,6 +306,7 @@
         white-space: pre-wrap;
         cursor: inherit;
         transform-origin: 0 0;
+        padding: 0;
       }
     }
   }
