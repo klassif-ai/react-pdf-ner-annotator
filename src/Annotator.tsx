@@ -59,7 +59,7 @@ const Annotator = forwardRef(({
 
   useImperativeHandle(ref, () => ({ removeAnnotation }));
 
-  const removeAnnotation = (id: string) => {
+  const removeAnnotation = (id: number) => {
     deleteAnnotation(id);
   };
 

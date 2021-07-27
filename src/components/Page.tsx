@@ -20,7 +20,7 @@ interface Props {
   disableOCR: boolean;
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
-  removeAnnotation: (id: string) => void;
+  removeAnnotation: (id: number) => void;
   addPageToTextMap: (
     page: number,
     pdfTextLayer: Array<TextLayerItem>,

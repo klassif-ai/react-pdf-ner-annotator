@@ -12,7 +12,7 @@ interface Props {
   tokens: Array<string>;
   offset: number;
   annotations: Array<Annotation>;
-  removeAnnotation: (id: string) => void;
+  removeAnnotation: (id: number) => void;
 }
 
 const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotations, removeAnnotation }: Props) => {

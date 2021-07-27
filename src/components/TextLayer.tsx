@@ -1,7 +1,6 @@
 import React from 'react';
 import deburr from 'lodash/deburr';
 import { TextLayerItem } from '../interfaces/textLayer';
-import { generateRandomId } from '../helpers/generalHelpers';
 import TokenContainer from './TokenContainer';
 import { Annotation } from '../interfaces/annotation';
 import hash from 'object-hash';
@@ -13,7 +12,7 @@ interface Props {
   textLayer: Array<TextLayerItem>|null;
   tokenizer: RegExp;
   annotations: Array<Annotation>;
-  removeAnnotation: (id: string) => void;
+  removeAnnotation: (id: number) => void;
 }
 
 const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokenizer, annotations, removeAnnotation }: Props) => {

@@ -11,28 +11,28 @@ import 'react-pdf-ner-annotator/src/scss/style.scss';
 
 const defaultAnnotations: Array<Annotation> = [
   {
-    'id': 'czj6p188jb',
+    'id': 1,
     'page': 1,
     'tokens': ['#', 'PO002848'],
     'textIds': [16, 17],
     'entity': { 'id': 5, 'name': 'Reference', 'color': '#DCE775', 'entityType': 'NER' },
   },
   {
-    'id': 'v7rymcccdg',
+    'id': 2,
     'page': 1,
     'tokens': ['Brainjar', 'nv'],
     'textIds': [1, 2],
     'entity': { 'id': 3, 'name': 'Organisation', 'color': '#81C784', 'entityType': 'NER' },
   },
   {
-    'id': '74s33l7zzu',
+    'id': 3,
     'page': 1,
     'tokens': ['Gaston', 'Geenslaan', '11', 'B4', '3001', 'Leuven', 'Belgie'],
     'textIds': [3, 4, 5, 6, 7, 8, 9],
     'entity': { 'id': 1, 'name': 'Location', 'color': '#4DD0E1', 'entityType': 'NER' },
   },
   {
-    'id': 'yq4giluopu',
+    'id': 4,
     'page': 1,
     'tokens': ['10/08/2021'],
     'textIds': [32],

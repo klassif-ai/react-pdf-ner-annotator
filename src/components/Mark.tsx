@@ -6,7 +6,7 @@ import { Annotation } from '../interfaces/annotation';
 interface Props {
   token: string;
   annotation: Annotation;
-  removeAnnotation: (id: string) => void;
+  removeAnnotation: (id: number) => void;
 }
 
 const Mark = ({ token, annotation, removeAnnotation }: Props)  => {
