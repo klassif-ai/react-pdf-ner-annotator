@@ -7,15 +7,15 @@
 
   .active-entity {
     position: absolute;
-    padding: 10px;
+    padding: 10px 20px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     text-align: center;
     width: auto;
-    min-width: 100px;
     left: 50%;
-    right: 50%;
+    transform: translateX(-50%);
     z-index: 3;
+    font-weight: bold;
   }
 
   .annotator-pages-container {
