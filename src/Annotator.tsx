@@ -6,6 +6,7 @@ import React, {
   useImperativeHandle,
   forwardRef,
   Ref,
+  memo
 } from 'react';
 import usePDF from './hooks/usePDF';
 import useAnnotations from './hooks/useAnnotations';
@@ -16,6 +17,7 @@ import ButtonGroup from './components/ButtonGroup';
 import { Entity } from './interfaces/entity';
 import { Annotation } from './interfaces/annotation';
 import { TextLayer, TextLayerItem } from './interfaces/textLayer';
+import EntityVisualisation from './components/EntityVisualisation';
 
 interface Props {
   url?: string;
@@ -67,10 +69,22 @@ const Annotator = forwardRef(({
     if (getAnnotations) {
       getAnnotations(annotations);
     }
+  }, [annotations, getAnnotations]);
+
+  useEffect(() => {
     if (getTextMaps) {
       getTextMaps(initialTextMap || textMap);
     }
-  }, [annotations, textMap, initialTextMap, getAnnotations, getTextMaps]);
+  }, [textMap, initialTextMap, getTextMaps]);
+
+  const style = useMemo(() => {
+    if (entity) {
+      return {
+        border: `5px solid ${entity.color}`
+      };
+    }
+    return {};
+  }, [entity]);
 
   const getTextLayerForPage = useCallback((page: number): Array<TextLayerItem> | undefined => {
     if (initialTextMap) {
@@ -105,7 +119,8 @@ const Annotator = forwardRef(({
   }
 
   return (
-    <div className="annotator-container">
+    <div className="annotator-container" style={style}>
+      <EntityVisualisation entity={entity} />
       <div className="annotator-pages-container">
         <div className="annotator-pages">
           {Array(pages).fill(0).map((_, index) => {
@@ -136,5 +151,5 @@ const Annotator = forwardRef(({
   );
 });
 
-export default Annotator;
+export default memo(Annotator);
 

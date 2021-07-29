@@ -3,10 +3,23 @@
   height: inherit;
   max-height: inherit;
   background-color: #525659;
+  box-sizing: border-box;
+
+  .active-entity {
+    position: absolute;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: center;
+    width: auto;
+    min-width: 100px;
+    left: 50%;
+    right: 50%;
+    z-index: 3;
+  }
 
   .annotator-pages-container {
-    height: inherit;
-    max-height: inherit;
+    height: 100%;
     overflow-y: auto;
 
     .annotator-pages {
