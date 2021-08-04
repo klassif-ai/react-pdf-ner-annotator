@@ -144,7 +144,7 @@ const Page = ({
           entity={entity}
           addAnnotation={addAnnotation}
           pdfInformation={{ width: pageViewport.width, height: pageViewport.height, scale }}
-          ref={canvasRef}
+          pdfContext={context}
         >
           <TextLayer
             inView={inView}

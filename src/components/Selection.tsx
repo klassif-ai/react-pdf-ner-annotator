@@ -17,11 +17,12 @@ interface Props {
   style?: {[key: string]: string};
   entity?: Entity;
   pdfInformation: PDFMetaData;
+  pdfContext: CanvasRenderingContext2D;
 }
 
 const initialCoords: Rectangle = { left: 0, top: 0, width: 0, height: 0 };
 
-const Selection = forwardRef(({
+const Selection = ({
   pageNumber,
   children,
   addAnnotation,
@@ -29,15 +30,14 @@ const Selection = forwardRef(({
   style,
   entity,
   pdfInformation,
-}: Props, ref: Ref<HTMLCanvasElement>) => {
+  pdfContext,
+}: Props) => {
   const selectionRef = useRef(null);
   const mouse = useMouse(selectionRef);
 
   const [isDragging, setIsDragging] = useState(false);
   const [mouseCoords, setMouseCoords] = useState<Point>({ x: 0, y: 0 });
   const [coords, setCoords] = useState(initialCoords);
-
-  console.log(ref);
 
   const mode = useMemo(() => {
     if (entity && isDragging) {
@@ -91,7 +91,7 @@ const Selection = forwardRef(({
           break;
         }
         case 'AREA': {
-          const areaToAdd = buildAreaAnnotation(pageNumber, entity, coordsToUse, pdfInformation);
+          const areaToAdd = buildAreaAnnotation(pageNumber, entity, coordsToUse, pdfInformation, pdfContext);
           if (areaToAdd) {
             addAnnotation(areaToAdd);
           }
@@ -128,6 +128,6 @@ const Selection = forwardRef(({
       { children }
     </div>
   );
-});
+};
 
 export default Selection;

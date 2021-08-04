@@ -22,4 +22,5 @@ interface AreaAnnotation {
   boundingBox: Rectangle;
   pdfInformation: PDFMetaData;
   text?: string;
+  base64Image?: string;
 }
