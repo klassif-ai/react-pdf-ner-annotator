@@ -10,7 +10,8 @@ import useTextLayer from '../hooks/useTextLayer';
 import Selection from './Selection';
 import OcrInfo from './OcrInfo';
 import Loader from './Loader';
-import TextLayer from './TextLayer';
+import TextLayer from './textLayer/TextLayer';
+import AreaLayer from './areaLayer/AreaLayer';
 
 interface Props {
   pageNumber: number;
@@ -20,6 +21,7 @@ interface Props {
   disableOCR: boolean;
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
+  updateAnnotation: (annotation: Annotation) => void;
   removeAnnotation: (id: number) => void;
   addPageToTextMap: (
     page: number,
@@ -40,6 +42,7 @@ const Page = ({
   disableOCR,
   annotations,
   addAnnotation,
+  updateAnnotation,
   removeAnnotation,
   addPageToTextMap,
   entity,
@@ -140,20 +143,28 @@ const Page = ({
           style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}
           entity={entity}
           addAnnotation={addAnnotation}
+          pdfInformation={{ width: pageViewport.width, height: pageViewport.height, scale }}
+          ref={canvasRef}
         >
           <TextLayer
             inView={inView}
             canvasInitialized={!!canvasRef}
-            isAnnotating={!!entity}
+            isAnnotating={entity?.entityType === 'NER'}
             textLayer={textLayer || ocrResult?.ocrWords}
             tokenizer={tokenizer}
-            annotations={annotations}
+            annotations={annotations.filter((annotation) => !!annotation.nerAnnotation)}
             removeAnnotation={removeAnnotation}
           />
           <div className="ocr-info-container">
             <OcrInfo loading={ocrLoading} message={message} error={ocrError} />
           </div>
         </Selection>
+        <AreaLayer
+          pdfScale={scale}
+          annotations={annotations.filter((annotation) => !!annotation.areaAnnotation)}
+          removeAnnotation={removeAnnotation}
+          updateAnnotation={updateAnnotation}
+        />
       </div>
     </div>
   );

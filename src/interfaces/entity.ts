@@ -1,4 +1,4 @@
-export type EntityType = 'NER';
+type EntityType = 'NER' | 'AREA';
 
 export interface Entity {
   id: number;

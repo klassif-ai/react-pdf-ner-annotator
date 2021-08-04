@@ -322,5 +322,57 @@
         padding: 0;
       }
     }
+
+    .area-annotation__container {
+      position: absolute;
+
+      .area-annotation__text-input {
+        padding: 8px 12px;
+        background-color: #ffffff;
+        border: 1px solid #e1e4e8;
+        border-radius: 2px;
+        width: calc(100% - 22px);
+        min-width: 100px;
+        margin-bottom: 2px;
+
+        &:focus {
+          outline: 0;
+          background-color: #fff;
+          box-shadow: 0 0 0 2px #e8f0f0;
+        }
+
+        &.hidden {
+          visibility: hidden;
+        }
+      }
+
+      .area-annotation__mark {
+        position: relative;
+        cursor: pointer;
+        background-color: transparent;
+
+        .area-annotation__toggle-icon {
+          position: absolute;
+          top: -12px;
+          left: -12px;
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+          background-color: #f7f7f7;
+          border-radius: 100%;
+          padding: 2px;
+          z-index: 1;
+          border: 1px solid rgba(0, 0, 0, 0.3);
+          opacity: 0.8;
+        }
+
+        span {
+          width: 100%;
+          height: 100%;
+          display: block;
+          opacity: 0.2;
+        }
+      }
+    }
   }
 }

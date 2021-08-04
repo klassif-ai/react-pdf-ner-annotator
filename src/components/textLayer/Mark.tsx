@@ -1,5 +1,5 @@
 import React from 'react';
-import { Annotation } from '../interfaces/annotation';
+import { Annotation } from '../../interfaces/annotation';
 
 
 

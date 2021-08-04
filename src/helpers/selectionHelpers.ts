@@ -2,7 +2,7 @@ import { Rectangle } from 'tesseract.js';
 import { Point } from '../interfaces/point';
 
 export const isCoordsEmpty = (coordinates: Rectangle): boolean => {
-  return coordinates.width * coordinates.height <= 0;
+  return coordinates.width * coordinates.height <= 25;
 };
 
 export const calculateSelectionRectangle = (startPoint: Point, endPoint: Point): Rectangle => {

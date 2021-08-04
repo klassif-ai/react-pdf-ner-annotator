@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { TextLayerItem } from '../interfaces/textLayer';
-import { getTextMetrics } from '../helpers/textMapHelpers';
+import { TextLayerItem } from '../../interfaces/textLayer';
+import { getTextMetrics } from '../../helpers/textMapHelpers';
 import Token from './Token';
-import { Annotation } from '../interfaces/annotation';
+import { Annotation } from '../../interfaces/annotation';
 import Mark from './Mark';
-import { isBetween } from '../helpers/generalHelpers';
+import { isBetween } from '../../helpers/generalHelpers';
 
 interface Props {
   isAnnotating: boolean;
@@ -57,7 +57,7 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
       {
         tokens.map((token, keyIndex) => {
           const dataI = textLayerItem.dataI || (offset + index + 1);
-          const annotation = annotations.find((a) => a.textIds.includes(dataI));
+          const annotation = annotations.find((a) => a.nerAnnotation.textIds.includes(dataI));
           const tokenIndexIsNotFirstOrLast = isBetween(keyIndex, 0, tokens.length - 1);
 
           if (token === ' ') {

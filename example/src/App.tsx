@@ -13,30 +13,57 @@ const defaultAnnotations: Array<Annotation> = [
   {
     'id': 1,
     'page': 1,
-    'tokens': ['#', 'PO002848'],
-    'textIds': [16, 17],
+    'nerAnnotation': {
+      'tokens': ['#', 'PO002848'],
+      'textIds': [16, 17],
+    },
     'entity': { 'id': 5, 'name': 'Reference', 'color': '#DCE775', 'entityType': 'NER' },
   },
   {
     'id': 2,
     'page': 1,
-    'tokens': ['Brainjar', 'nv'],
-    'textIds': [1, 2],
+    'nerAnnotation': {
+      'tokens': ['Brainjar', 'nv'],
+      'textIds': [1, 2],
+    },
     'entity': { 'id': 3, 'name': 'Organisation', 'color': '#81C784', 'entityType': 'NER' },
   },
   {
     'id': 3,
     'page': 1,
-    'tokens': ['Gaston', 'Geenslaan', '11', 'B4', '3001', 'Leuven', 'Belgie'],
-    'textIds': [3, 4, 5, 6, 7, 8, 9],
+    'nerAnnotation': {
+      'tokens': ['Gaston', 'Geenslaan', '11', 'B4', '3001', 'Leuven', 'Belgie'],
+      'textIds': [3, 4, 5, 6, 7, 8, 9],
+    },
     'entity': { 'id': 1, 'name': 'Location', 'color': '#4DD0E1', 'entityType': 'NER' },
   },
   {
     'id': 4,
     'page': 1,
-    'tokens': ['10/08/2021'],
-    'textIds': [32],
+    'nerAnnotation': {
+      'tokens': ['10/08/2021'],
+      'textIds': [32],
+    },
     'entity': { 'id': 4, 'name': 'Date', 'color': '#AED581', 'entityType': 'NER' },
+  },
+  {
+    'id': 5,
+    'page': 1,
+    'areaAnnotation': {
+      'boundingBox': {
+        'left': 81,
+        'top': 170,
+        'width': 310,
+        'height': 100,
+      },
+      'pdfInformation': {
+        'width': 916,
+        'height': 1174,
+        'scale': 1.5,
+      },
+      'text': 'Brainjar'
+    },
+    'entity': { 'id': 7, 'name': 'Logo', 'color': '#b39ddb', 'entityType': 'AREA' },
   },
 ];
 
@@ -77,6 +104,12 @@ const entities: Array<Entity> = [
     color: '#FF8A65',
     entityType: 'NER',
   },
+  {
+    id: 7,
+    name: 'Logo',
+    color: '#b39ddb',
+    entityType: 'AREA'
+  }
 ];
 
 const App = () => {
