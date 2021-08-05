@@ -2,8 +2,12 @@
 
 A React component to annotate named entities directly onto a PDF.
 
-## Features
+[Live demo](https://react-annotator-demo.netlify.app/)
 
+## Features
+* NER annotation
+* Area annotation
+* OCR on scanned PDFs
 
 ## Installation
 The package can be installed through NPM.
