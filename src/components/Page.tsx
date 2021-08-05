@@ -155,16 +155,16 @@ const Page = ({
             annotations={annotations.filter((annotation) => !!annotation.nerAnnotation)}
             removeAnnotation={removeAnnotation}
           />
+          <AreaLayer
+            pdfScale={scale}
+            annotations={annotations.filter((annotation) => !!annotation.areaAnnotation)}
+            removeAnnotation={removeAnnotation}
+            updateAnnotation={updateAnnotation}
+          />
           <div className="ocr-info-container">
             <OcrInfo loading={ocrLoading} message={message} error={ocrError} />
           </div>
         </Selection>
-        <AreaLayer
-          pdfScale={scale}
-          annotations={annotations.filter((annotation) => !!annotation.areaAnnotation)}
-          removeAnnotation={removeAnnotation}
-          updateAnnotation={updateAnnotation}
-        />
       </div>
     </div>
   );
