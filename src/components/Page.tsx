@@ -105,6 +105,10 @@ const Page = ({
   }, [page, scale, canvasRef, context, inView]);
 
   useEffect(() => {
+    if (textLayer?.length) {
+      setLoading(false);
+      return;
+    }
     if (inView && pdfPage && !textLayer) {
       pdfPage.getTextContent().then((content) => {
         if (content.items.length) {
