@@ -218,7 +218,9 @@
 .token__text-item {
   color: transparent;
   &.annotatable {
-    border: 1px solid black;
+    padding: 1px;
+    border: 1px solid #BEBEBE;
+    border-radius: 5px;
   }
 }
 
