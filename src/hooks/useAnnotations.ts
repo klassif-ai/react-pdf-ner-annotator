@@ -1,8 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 
 const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
   const [annotations, setAnnotations] = useState<Array<Annotation>>(defaultAnnotations);
+
+  useEffect(() => {
+    setAnnotations(defaultAnnotations);
+  }, [defaultAnnotations]);
 
   const getAnnotationsForPage = useCallback((page: number): Array<Annotation> => {
     return annotations.filter((annotation: Annotation) => annotation.page === page);
