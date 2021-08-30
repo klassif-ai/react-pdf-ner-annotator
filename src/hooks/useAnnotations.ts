@@ -18,6 +18,15 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
     setAnnotations(newAnnotations);
   }, [annotations]);
 
+  const updateAnnotation = useCallback((annotation: Annotation) => {
+    const indexToUpdate  = annotations.findIndex(x => x.id === annotation.id);
+    if (indexToUpdate !== -1) {
+      const updatedAnnotations = [...annotations];
+      updatedAnnotations[indexToUpdate] = annotation;
+      setAnnotations(updatedAnnotations);
+    }
+  }, [annotations]);
+
   const removeAnnotation = useCallback((id: number) => {
     const index = annotations.findIndex(a => a.id === id);
     if (index !== -1) {
@@ -25,7 +34,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
     }
   }, [annotations]);
 
-  return { annotations, getAnnotationsForPage, addAnnotation, removeAnnotation };
+  return { annotations, getAnnotationsForPage, addAnnotation, updateAnnotation, removeAnnotation };
 };
 
 export default useAnnotations;

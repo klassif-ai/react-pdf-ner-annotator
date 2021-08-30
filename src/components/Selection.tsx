@@ -1,11 +1,13 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback, Ref, forwardRef } from 'react';
 import useMouse from '@react-hook/mouse-position';
 import { Rectangle } from 'tesseract.js';
-import { calculateSelectionRectangle, findIntersectingChildren, isCoordsEmpty } from '../helpers/selectionHelpers';
+import { calculateSelectionRectangle, isCoordsEmpty } from '../helpers/selectionHelpers';
 import { AnnotationParams } from '../interfaces/annotation';
 import { Entity } from '../interfaces/entity';
 import { Point } from '../interfaces/point';
 import SelectionRectangle from './SelectionRectangle';
+import { buildAreaAnnotation, buildNerAnnotation } from '../helpers/annotationHelpers';
+import { PDFMetaData } from '../interfaces/pdf';
 
 interface Props {
   pageNumber: number;
@@ -14,6 +16,8 @@ interface Props {
   className?: string;
   style?: {[key: string]: string};
   entity?: Entity;
+  pdfInformation: PDFMetaData;
+  pdfContext: CanvasRenderingContext2D;
 }
 
 const initialCoords: Rectangle = { left: 0, top: 0, width: 0, height: 0 };
@@ -24,7 +28,9 @@ const Selection = ({
   addAnnotation,
   className,
   style,
-  entity
+  entity,
+  pdfInformation,
+  pdfContext,
 }: Props) => {
   const selectionRef = useRef(null);
   const mouse = useMouse(selectionRef);
@@ -70,33 +76,29 @@ const Selection = ({
   const handleMouseUp = useCallback(() => {
     if (selectionRef && entity) {
       let coordsToUse = coords;
-      if (isCoordsEmpty(coords)) {
+      if (isCoordsEmpty(coords) && entity.entityType === 'NER') {
         const { x, y } = mouse;
         coordsToUse = { left: x!, top: y!, width: 1, height: 1 };
       }
-      const { children: selectionChildren } = selectionRef.current!;
-      const intersects = findIntersectingChildren(selectionChildren, coordsToUse);
-      const markToAdd: AnnotationParams = {
-        page: pageNumber,
-        tokens: [],
-        textIds: [],
-        entity: entity!
-      };
 
-      intersects.forEach((intersect) => {
-        const offsetX = intersect.offsetLeft;
-        const offsetY = intersect.offsetTop;
-        findIntersectingChildren(intersect.children, coordsToUse, offsetX, offsetY).forEach((child, index) => {
-          const dataI = child.getAttribute('data-i');
-          if (dataI) {
-            markToAdd.tokens.push(child.textContent);
-            markToAdd.textIds.push(parseInt(dataI, 10));
+      switch (entity.entityType) {
+        case 'NER': {
+          const { children: selectionChildren } = selectionRef.current!;
+          const markToAdd = buildNerAnnotation(pageNumber, entity, selectionChildren, coordsToUse);
+          if (markToAdd.nerAnnotation.textIds.length) {
+            addAnnotation(markToAdd);
           }
-        });
-      });
-
-      if (markToAdd.textIds.length) {
-        addAnnotation(markToAdd);
+          break;
+        }
+        case 'AREA': {
+          const areaToAdd = buildAreaAnnotation(pageNumber, entity, coordsToUse, pdfInformation, pdfContext);
+          if (areaToAdd) {
+            addAnnotation(areaToAdd);
+          }
+          break;
+        }
+        default:
+          break;
       }
     }
 
