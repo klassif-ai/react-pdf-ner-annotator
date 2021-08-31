@@ -11,6 +11,7 @@ export interface AnnotationParams {
   nerAnnotation?: NerAnnotation;
   areaAnnotation?: AreaAnnotation;
   page: number;
+  score?: number;
 }
 
 interface NerAnnotation {
