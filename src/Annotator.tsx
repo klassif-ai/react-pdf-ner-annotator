@@ -28,6 +28,7 @@ interface Props {
   initialScale?: number;
   tokenizer?: RegExp;
   disableOCR?: boolean;
+  readonly?: boolean;
   entity?: Entity;
   initialTextMap?: Array<TextLayer>;
   defaultAnnotations?: Array<Annotation>,
@@ -42,6 +43,7 @@ const Annotator = forwardRef(({
   initialScale = 1.5,
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
   disableOCR = false,
+  readonly = false,
   entity,
   initialTextMap,
   defaultAnnotations = [],
@@ -57,7 +59,7 @@ const Annotator = forwardRef(({
     addAnnotation,
     updateAnnotation,
     removeAnnotation: deleteAnnotation
-  } = useAnnotations(defaultAnnotations);
+  } = useAnnotations(defaultAnnotations, readonly);
   const { textMap, addPageToTextMap } = useTextMap(annotations);
 
   useImperativeHandle(ref, () => ({ removeAnnotation }));

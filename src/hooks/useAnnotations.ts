@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 
-const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
+const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean) => {
   const [annotations, setAnnotations] = useState<Array<Annotation>>(defaultAnnotations);
 
   useEffect(() => {
@@ -13,6 +13,10 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
   }, [annotations]);
 
   const addAnnotation = useCallback((annotation: AnnotationParams) => {
+    if (readonly) {
+      return;
+    }
+
     const lastId = annotations[annotations.length - 1]?.id || 0;
     const newAnnotation: Annotation = {
       id: lastId + 1,
@@ -23,6 +27,10 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
   }, [annotations]);
 
   const updateAnnotation = useCallback((annotation: Annotation) => {
+    if (readonly) {
+      return;
+    }
+
     const indexToUpdate  = annotations.findIndex(x => x.id === annotation.id);
     if (indexToUpdate !== -1) {
       const updatedAnnotations = [...annotations];
@@ -32,6 +40,10 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>) => {
   }, [annotations]);
 
   const removeAnnotation = useCallback((id: number) => {
+    if (readonly) {
+      return;
+    }
+
     const index = annotations.findIndex(a => a.id === id);
     if (index !== -1) {
       setAnnotations(annotations.filter((_, i) => i !== index));
