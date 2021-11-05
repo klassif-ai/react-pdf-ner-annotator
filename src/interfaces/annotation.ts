@@ -8,10 +8,11 @@ export interface Annotation extends AnnotationParams {
 
 export interface AnnotationParams {
   entity: Entity;
+  page: number;
   nerAnnotation?: NerAnnotation;
   areaAnnotation?: AreaAnnotation;
-  page: number;
   score?: number;
+  index?: number;
 }
 
 interface NerAnnotation {
