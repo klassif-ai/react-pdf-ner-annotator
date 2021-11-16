@@ -24,7 +24,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     };
     const newAnnotations = [...annotations, newAnnotation];
     setAnnotations(newAnnotations);
-  }, [annotations]);
+  }, [annotations, readonly]);
 
   const updateAnnotation = useCallback((annotation: Annotation) => {
     if (readonly) {
@@ -37,7 +37,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
       updatedAnnotations[indexToUpdate] = annotation;
       setAnnotations(updatedAnnotations);
     }
-  }, [annotations]);
+  }, [annotations, readonly]);
 
   const removeAnnotation = useCallback((id: number) => {
     if (readonly) {
@@ -48,7 +48,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     if (index !== -1) {
       setAnnotations(annotations.filter((_, i) => i !== index));
     }
-  }, [annotations]);
+  }, [annotations, readonly]);
 
   return { annotations, getAnnotationsForPage, addAnnotation, updateAnnotation, removeAnnotation };
 };
