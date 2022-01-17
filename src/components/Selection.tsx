@@ -8,11 +8,13 @@ import { Point } from '../interfaces/point';
 import SelectionRectangle from './SelectionRectangle';
 import { buildAreaAnnotation, buildNerAnnotation } from '../helpers/annotationHelpers';
 import { PDFMetaData } from '../interfaces/pdf';
+import useKeyPressedListener from '../hooks/useKeyPressedListener';
 
 interface Props {
   pageNumber: number;
   children: React.ReactNode;
   addAnnotation: (annotation: AnnotationParams) => void;
+  updateLastAnnotationForEntity: (annotation: AnnotationParams) => void;
   className?: string;
   style?: {[key: string]: string};
   entity?: Entity;
@@ -26,6 +28,7 @@ const Selection = ({
   pageNumber,
   children,
   addAnnotation,
+  updateLastAnnotationForEntity,
   className,
   style,
   entity,
@@ -34,6 +37,7 @@ const Selection = ({
 }: Props) => {
   const selectionRef = useRef(null);
   const mouse = useMouse(selectionRef);
+  const keyPressed = useKeyPressedListener();
 
   const [isDragging, setIsDragging] = useState(false);
   const [mouseCoords, setMouseCoords] = useState<Point>({ x: 0, y: 0 });
@@ -86,7 +90,11 @@ const Selection = ({
           const { children: selectionChildren } = selectionRef.current!;
           const markToAdd = buildNerAnnotation(pageNumber, entity, selectionChildren, coordsToUse);
           if (markToAdd.nerAnnotation.textIds.length) {
-            addAnnotation(markToAdd);
+            if (keyPressed) {
+              updateLastAnnotationForEntity(markToAdd);
+            } else {
+              addAnnotation(markToAdd);
+            }
           }
           break;
         }
@@ -105,7 +113,7 @@ const Selection = ({
     setIsDragging(false);
     setMouseCoords({ x: 0, y: 0 });
     setCoords(initialCoords);
-  }, [selectionRef, coords, mouse, pageNumber, entity, addAnnotation]);
+  }, [entity, coords, mouse, pageNumber, keyPressed, updateLastAnnotationForEntity, addAnnotation, pdfInformation, pdfContext]);
 
   const handleMouseMove = useCallback(() => {
     if (isDragging && entity) {

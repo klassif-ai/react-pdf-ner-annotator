@@ -22,6 +22,7 @@ interface Props {
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
   updateAnnotation: (annotation: Annotation) => void;
+  updateLastAnnotationForEntity: (annotation: AnnotationParams) => void;
   removeAnnotation: (id: number) => void;
   addPageToTextMap: (
     page: number,
@@ -43,6 +44,7 @@ const Page = ({
   annotations,
   addAnnotation,
   updateAnnotation,
+  updateLastAnnotationForEntity,
   removeAnnotation,
   addPageToTextMap,
   entity,
@@ -147,6 +149,7 @@ const Page = ({
           style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}
           entity={entity}
           addAnnotation={addAnnotation}
+          updateLastAnnotationForEntity={updateLastAnnotationForEntity}
           pdfInformation={{ width: pageViewport.width, height: pageViewport.height, scale }}
           pdfContext={context}
         >

@@ -6,4 +6,5 @@ export interface Entity {
   color: string;
   entityType: EntityType;
   regex?: RegExp;
+  index?: number;
 }

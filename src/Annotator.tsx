@@ -58,6 +58,7 @@ const Annotator = forwardRef(({
     getAnnotationsForPage,
     addAnnotation,
     updateAnnotation,
+    updateLastAnnotationForEntity,
     removeAnnotation: deleteAnnotation
   } = useAnnotations(defaultAnnotations, readonly);
   const { textMap, addPageToTextMap } = useTextMap(annotations);
@@ -140,6 +141,7 @@ const Annotator = forwardRef(({
                 pageNumber={pageNumber}
                 annotations={getAnnotationsForPage(pageNumber)}
                 addAnnotation={addAnnotation}
+                updateLastAnnotationForEntity={updateLastAnnotationForEntity}
                 removeAnnotation={deleteAnnotation}
                 addPageToTextMap={addPageToTextMap}
                 entity={entity}

@@ -20,7 +20,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     const lastId = annotations[annotations.length - 1]?.id || 0;
     const newAnnotation: Annotation = {
       id: lastId + 1,
-      ...annotation
+      ...annotation,
     };
     const newAnnotations = [...annotations, newAnnotation];
     setAnnotations(newAnnotations);
@@ -31,13 +31,44 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
       return;
     }
 
-    const indexToUpdate  = annotations.findIndex(x => x.id === annotation.id);
+    const indexToUpdate = annotations.findIndex(x => x.id === annotation.id);
     if (indexToUpdate !== -1) {
       const updatedAnnotations = [...annotations];
       updatedAnnotations[indexToUpdate] = annotation;
       setAnnotations(updatedAnnotations);
     }
   }, [annotations, readonly]);
+
+  const updateLastAnnotationForEntity = useCallback((annotation: AnnotationParams) => {
+    if (readonly) {
+      return;
+    }
+
+    const lastAnnotationForEntity = annotations
+      .slice()
+      .reverse()
+      .find((x) => x.entity.id === annotation.entity.id && x.index === annotation.index);
+
+    if (lastAnnotationForEntity) {
+      const updatedAnnotations = [...annotations]
+        .map((x) => {
+          if (x.id === lastAnnotationForEntity.id) {
+            return {
+              ...x,
+              nerAnnotation: {
+                ...x.nerAnnotation,
+                tokens: [...x.nerAnnotation.tokens, ...annotation.nerAnnotation.tokens],
+                textIds: [...x.nerAnnotation.textIds, ...annotation.nerAnnotation.textIds],
+              }
+            };
+          }
+          return x;
+        });
+      setAnnotations(updatedAnnotations);
+    } else {
+      addAnnotation(annotation);
+    }
+  }, [addAnnotation, annotations, readonly]);
 
   const removeAnnotation = useCallback((id: number) => {
     if (readonly) {
@@ -50,7 +81,14 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     }
   }, [annotations, readonly]);
 
-  return { annotations, getAnnotationsForPage, addAnnotation, updateAnnotation, removeAnnotation };
+  return {
+    annotations,
+    getAnnotationsForPage,
+    addAnnotation,
+    updateAnnotation,
+    updateLastAnnotationForEntity,
+    removeAnnotation,
+  };
 };
 
 export default useAnnotations;

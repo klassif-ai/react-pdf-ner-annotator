@@ -24,7 +24,8 @@ export const buildNerAnnotation = (pageNumber: number, entity: Entity, selection
       tokens: [],
       textIds: [],
     },
-    entity: entity!
+    entity: entity!,
+    index: entity!.index,
   };
 
   intersects.forEach((intersect) => {

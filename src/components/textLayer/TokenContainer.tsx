@@ -18,7 +18,7 @@ interface Props {
 const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotations, removeAnnotation }: Props) => {
   let index = 0;
   let spaceAsMark = false;
-  const { text, coords } = textLayerItem;
+  const { text, coords, fontSize, transform, fontFamily } = textLayerItem;
 
   const metrics = useMemo(() => getTextMetrics(text), [text]);
   const scale = useMemo(() => ({
@@ -27,8 +27,6 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
   }), [metrics, coords]);
 
   const style = useMemo(() => {
-    const { coords, fontSize, transform, fontFamily } = textLayerItem;
-
     if (fontSize && transform && fontFamily) {
       return {
         left: `${coords.left}px`,
@@ -47,7 +45,7 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
       font: '12px sans-serif',
       transform: `scale(${scale.x}, ${scale.y})`,
     };
-  }, [textLayerItem, metrics, scale]);
+  }, [fontSize, transform, fontFamily, coords.left, coords.top, coords.width, coords.height, scale.x, scale.y]);
 
   return (
     <span
