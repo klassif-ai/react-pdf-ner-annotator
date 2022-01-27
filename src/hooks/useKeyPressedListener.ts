@@ -3,17 +3,25 @@ import { useCallback, useEffect, useState } from 'react';
 const useKeyPressedListener = (targetKey = 'CONTROL') => {
   const [keyPressed, setKeyPressed] = useState<boolean>(false);
 
-  const downHandler = useCallback(({ key }) => {
-    if (key.toUpperCase() === targetKey.toUpperCase()) {
-      setKeyPressed(true);
+  const getTargetKeys = useCallback(() => {
+    if (targetKey.toUpperCase() === 'CONTROL' || targetKey.toUpperCase() === 'META') {
+      return ['CONTROL', 'META'];
     }
+
+    return [targetKey.toUpperCase()]
   }, [targetKey]);
 
+  const downHandler = useCallback(({ key }) => {
+    if (getTargetKeys().includes(key.toUpperCase())) {
+      setKeyPressed(true);
+    }
+  }, [getTargetKeys]);
+
   const upHandler = useCallback(({ key }) => {
-    if (key.toUpperCase() === targetKey.toUpperCase()) {
+    if (getTargetKeys().includes(key.toUpperCase())) {
       setKeyPressed(false);
     }
-  }, [targetKey]);
+  }, [getTargetKeys]);
 
   useEffect(() => {
     window.addEventListener('keydown', downHandler);
