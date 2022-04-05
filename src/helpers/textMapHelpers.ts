@@ -10,6 +10,10 @@ export const buildTextMapFromTextLayer = (
   if (type === TextLayerType.TEXT_LAYER) {
     let index = 0;
     pdfTextLayer.forEach((textLayerItem) => {
+      if (!textLayerItem.text) {
+        return;
+      }
+
       let offset = 0;
       const { text, fontSize, fontFamily, transform, coords } = textLayerItem;
       text.match(tokenizer!)!.forEach((token) => {

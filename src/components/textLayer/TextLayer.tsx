@@ -22,6 +22,10 @@ const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokeniz
       <>
         {
           textLayer.map((textLayerItem) => {
+            if (!textLayerItem.text) {
+              return null;
+            }
+
             const tokens = deburr(textLayerItem.text).match(tokenizer);
             const filteredTokenLength = tokens.filter((t) => t !== ' ').length;
             offset += filteredTokenLength;
