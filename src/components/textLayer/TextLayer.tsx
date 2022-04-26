@@ -1,9 +1,9 @@
 import React from 'react';
-import deburr from 'lodash/deburr';
 import hash from 'object-hash';
 import { TextLayerItem } from '../../interfaces/textLayer';
 import TokenContainer from './TokenContainer';
 import { Annotation } from '../../interfaces/annotation';
+import { tokenizeText } from '../../helpers/textMapHelpers';
 
 interface Props {
   inView: boolean;
@@ -11,11 +11,12 @@ interface Props {
   isAnnotating: boolean;
   textLayer: Array<TextLayerItem>|null;
   tokenizer: RegExp;
+  needsTokenization: boolean;
   annotations: Array<Annotation>;
   removeAnnotation: (id: number) => void;
 }
 
-const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokenizer, annotations, removeAnnotation }: Props) => {
+const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokenizer, needsTokenization, annotations, removeAnnotation }: Props) => {
   if (inView && canvasInitialized && textLayer?.length) {
     let offset = 0;
     return (
@@ -26,7 +27,7 @@ const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokeniz
               return null;
             }
 
-            const tokens = deburr(textLayerItem.text).match(tokenizer);
+            const tokens = tokenizeText(textLayerItem.text, tokenizer, needsTokenization);
             const filteredTokenLength = tokens.filter((t) => t !== ' ').length;
             offset += filteredTokenLength;
             return (

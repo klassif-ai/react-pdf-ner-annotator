@@ -1,3 +1,4 @@
+import deburr from 'lodash/deburr';
 import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
 
 export const buildTextMapFromTextLayer = (
@@ -66,4 +67,12 @@ export const getTextMetrics = (text: string) => {
     'width': metrics.width,
     'height': lineHeight,
   };
+};
+
+export const tokenizeText = (input: string, tokenizer: RegExp, needsTokenization: boolean): Array<string> => {
+  if (needsTokenization) {
+    return deburr(input).match(tokenizer);
+  }
+
+  return deburr(input).match(new RegExp(/[^\s]+/g));
 };

@@ -159,6 +159,7 @@ const Page = ({
             isAnnotating={entity?.entityType === 'NER'}
             textLayer={textLayer || ocrResult?.ocrWords}
             tokenizer={tokenizer}
+            needsTokenization={!initialTextLayer}
             annotations={annotations.filter((annotation) => !!annotation.nerAnnotation)}
             removeAnnotation={removeAnnotation}
           />
