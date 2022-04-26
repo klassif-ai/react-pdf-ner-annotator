@@ -2,11 +2,12 @@ import React from 'react';
 import { Entity } from '../interfaces/entity';
 
 type Props = {
+  hidden?: boolean;
   entity?: Entity;
 };
 
-const EntityVisualisation = ({ entity }: Props) => {
-  if (!entity) {
+const EntityVisualisation = ({ hidden, entity }: Props) => {
+  if (!entity || hidden) {
     return null;
   }
 

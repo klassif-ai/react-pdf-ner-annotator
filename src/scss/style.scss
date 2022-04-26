@@ -303,6 +303,16 @@
   .page__container {
     position: relative;
 
+    .cursor-text {
+      z-index: 10;
+      position:absolute;
+      border-radius: 10px;
+      padding: 3px 10px;
+      font-family: sans-serif;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
     .page__canvas-container {
       box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
     }

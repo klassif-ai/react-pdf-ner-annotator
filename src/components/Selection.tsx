@@ -9,6 +9,7 @@ import SelectionRectangle from './SelectionRectangle';
 import { buildAreaAnnotation, buildNerAnnotation } from '../helpers/annotationHelpers';
 import { PDFMetaData } from '../interfaces/pdf';
 import useKeyPressedListener from '../hooks/useKeyPressedListener';
+import CursorText from './CursorText';
 
 interface Props {
   pageNumber: number;
@@ -20,6 +21,7 @@ interface Props {
   entity?: Entity;
   pdfInformation: PDFMetaData;
   pdfContext: CanvasRenderingContext2D;
+  hideAnnotatingTooltips?: boolean;
 }
 
 const initialCoords: Rectangle = { left: 0, top: 0, width: 0, height: 0 };
@@ -34,6 +36,7 @@ const Selection = ({
   entity,
   pdfInformation,
   pdfContext,
+  hideAnnotatingTooltips,
 }: Props) => {
   const selectionRef = useRef(null);
   const mouse = useMouse(selectionRef);
@@ -132,6 +135,11 @@ const Selection = ({
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
+      <CursorText
+        hidden={hideAnnotatingTooltips}
+        entity={entity}
+        mouseCoords={{ x: mouse?.x, y: mouse?.y }}
+      />
       <SelectionRectangle isDragging={isDragging} coordinates={coords} />
       { children }
     </div>

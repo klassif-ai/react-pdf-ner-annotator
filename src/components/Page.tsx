@@ -12,6 +12,7 @@ import OcrInfo from './OcrInfo';
 import Loader from './Loader';
 import TextLayer from './textLayer/TextLayer';
 import AreaLayer from './areaLayer/AreaLayer';
+import CursorText from './CursorText';
 
 interface Props {
   pageNumber: number;
@@ -33,6 +34,7 @@ interface Props {
   ) => void;
   entity?: Entity;
   initialTextLayer?: Array<TextLayerItem>;
+  hideAnnotatingTooltips?: boolean;
 }
 
 const Page = ({
@@ -49,6 +51,7 @@ const Page = ({
   addPageToTextMap,
   entity,
   initialTextLayer,
+  hideAnnotatingTooltips,
 }: Props) => {
   const [inViewRef, inView] = useInView({ threshold: 0 });
 
@@ -152,6 +155,7 @@ const Page = ({
           updateLastAnnotationForEntity={updateLastAnnotationForEntity}
           pdfInformation={{ width: pageViewport.width, height: pageViewport.height, scale }}
           pdfContext={context}
+          hideAnnotatingTooltips={hideAnnotatingTooltips}
         >
           <TextLayer
             inView={inView}

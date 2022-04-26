@@ -18,17 +18,14 @@ import { Entity } from './interfaces/entity';
 import { Annotation } from './interfaces/annotation';
 import { TextLayer, TextLayerItem } from './interfaces/textLayer';
 import EntityVisualisation from './components/EntityVisualisation';
+import { Config } from './interfaces/config';
 
 interface Props {
+  config?: Config;
   url?: string;
   data?: Uint8Array | BufferSource | string;
-  httpHeaders?: {
-    [key: string]: string;
-  };
   initialScale?: number;
   tokenizer?: RegExp;
-  disableOCR?: boolean;
-  readonly?: boolean;
   entity?: Entity;
   initialTextMap?: Array<TextLayer>;
   defaultAnnotations?: Array<Annotation>,
@@ -37,13 +34,11 @@ interface Props {
 }
 
 const Annotator = forwardRef(({
+  config = {},
   url,
   data,
-  httpHeaders,
   initialScale = 1.5,
   tokenizer = new RegExp(/\w+([,.\-/]\w+)+|\w+|\W/g),
-  disableOCR = false,
-  readonly = false,
   entity,
   initialTextMap,
   defaultAnnotations = [],
@@ -52,7 +47,7 @@ const Annotator = forwardRef(({
 }: Props, ref?: Ref<any>) => {
   const [scale, setScale] = useState(initialScale);
 
-  const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders });
+  const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders: config.httpHeaders });
   const {
     annotations,
     getAnnotationsForPage,
@@ -60,7 +55,7 @@ const Annotator = forwardRef(({
     updateAnnotation,
     updateLastAnnotationForEntity,
     removeAnnotation: deleteAnnotation
-  } = useAnnotations(defaultAnnotations, readonly);
+  } = useAnnotations(defaultAnnotations, config.readonly);
   const { textMap, addPageToTextMap } = useTextMap(annotations);
 
   useImperativeHandle(ref, () => ({ removeAnnotation }));
@@ -82,13 +77,17 @@ const Annotator = forwardRef(({
   }, [textMap, initialTextMap, getTextMaps]);
 
   const style = useMemo(() => {
+    if (config.hideAnnotatingEntityVisualizations) {
+      return {};
+    }
+
     if (entity) {
       return {
         border: `5px solid ${entity.color}`
       };
     }
     return {};
-  }, [entity]);
+  }, [entity, config]);
 
   const getTextLayerForPage = useCallback((page: number): Array<TextLayerItem> | undefined => {
     if (initialTextMap) {
@@ -124,7 +123,7 @@ const Annotator = forwardRef(({
 
   return (
     <div className="annotator-container" style={style}>
-      <EntityVisualisation entity={entity} />
+      <EntityVisualisation hidden={config.hideAnnotatingEntityVisualizations} entity={entity} />
       <div className="annotator-pages-container">
         <div className="annotator-pages">
           {Array(pages).fill(0).map((_, index) => {
@@ -137,7 +136,7 @@ const Annotator = forwardRef(({
                 scale={scale}
                 key={key}
                 tokenizer={tokenizer}
-                disableOCR={disableOCR}
+                disableOCR={config.disableOCR}
                 pageNumber={pageNumber}
                 annotations={getAnnotationsForPage(pageNumber)}
                 addAnnotation={addAnnotation}
@@ -147,6 +146,7 @@ const Annotator = forwardRef(({
                 entity={entity}
                 initialTextLayer={getTextLayerForPage(pageNumber)}
                 updateAnnotation={updateAnnotation}
+                hideAnnotatingTooltips={config.hideAnnotatingTooltips}
               />
             );
           })}
