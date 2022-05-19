@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport } from 'pdfjs-dist';
 import { mergeSplitWords } from '../helpers/pdfHelpers';
@@ -12,7 +12,6 @@ import OcrInfo from './OcrInfo';
 import Loader from './Loader';
 import TextLayer from './textLayer/TextLayer';
 import AreaLayer from './areaLayer/AreaLayer';
-import CursorText from './CursorText';
 
 interface Props {
   pageNumber: number;
@@ -181,4 +180,4 @@ const Page = ({
   );
 };
 
-export default Page;
+export default memo(Page);

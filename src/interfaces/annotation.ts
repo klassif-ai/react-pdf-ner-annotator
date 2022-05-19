@@ -13,6 +13,7 @@ export interface AnnotationParams {
   areaAnnotation?: AreaAnnotation;
   score?: number;
   index?: number;
+  hash?: string;
 }
 
 interface NerAnnotation {

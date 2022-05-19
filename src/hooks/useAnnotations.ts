@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import hash from 'object-hash';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 
 const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean) => {
@@ -20,6 +21,10 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     const lastId = annotations[annotations.length - 1]?.id || 0;
     const newAnnotation: Annotation = {
       id: lastId + 1,
+      hash: hash({
+        annotation,
+        dateTime: new Date().toLocaleString(),
+      }),
       ...annotation,
     };
     const newAnnotations = [...annotations, newAnnotation];

@@ -6,7 +6,6 @@ import React, {
   useImperativeHandle,
   forwardRef,
   Ref,
-  memo
 } from 'react';
 import usePDF from './hooks/usePDF';
 import useAnnotations from './hooks/useAnnotations';
@@ -157,5 +156,5 @@ const Annotator = forwardRef(({
   );
 });
 
-export default memo(Annotator);
+export default Annotator;
 

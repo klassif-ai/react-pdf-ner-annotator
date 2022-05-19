@@ -8,7 +8,7 @@ const useKeyPressedListener = (targetKey = 'CONTROL') => {
       return ['CONTROL', 'META'];
     }
 
-    return [targetKey.toUpperCase()]
+    return [targetKey.toUpperCase()];
   }, [targetKey]);
 
   const downHandler = useCallback(({ key }) => {
