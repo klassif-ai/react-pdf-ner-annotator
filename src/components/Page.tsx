@@ -12,8 +12,6 @@ import OcrInfo from './OcrInfo';
 import Loader from './Loader';
 import TextLayer from './textLayer/TextLayer';
 import AreaLayer from './areaLayer/AreaLayer';
-import ConfigContext from '../context/configContext';
-import AnnotationContext from '../context/annotationContext';
 
 interface Props {
   pageNumber: number;
@@ -156,6 +154,7 @@ const Page = ({
             canvasInitialized={!!canvasRef}
             textLayer={textLayer || ocrResult?.ocrWords}
             removeAnnotation={removeAnnotation}
+            needsTokenization={!initialTextLayer}
           />
           <AreaLayer
             pdfScale={scale}

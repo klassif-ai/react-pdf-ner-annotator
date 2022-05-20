@@ -1,18 +1,19 @@
 import React, { memo, useContext } from 'react';
-import deburr from 'lodash/deburr';
 import hash from 'object-hash';
 import { TextLayerItem } from '../../interfaces/textLayer';
 import TokenContainer from './TokenContainer';
 import AnnotationContext from '../../context/annotationContext';
+import { tokenizeText } from '../../helpers/textMapHelpers';
 
 interface Props {
   inView: boolean;
   canvasInitialized: boolean;
   textLayer: Array<TextLayerItem>|null;
+  needsTokenization: boolean;
   removeAnnotation: (id: number) => void;
 }
 
-const TextLayer = ({ inView, canvasInitialized, textLayer, removeAnnotation }: Props) => {
+const TextLayer = ({ inView, canvasInitialized, textLayer, needsTokenization, removeAnnotation }: Props) => {
   const { tokenizer } = useContext(AnnotationContext);
 
   if (inView && canvasInitialized && textLayer?.length) {
@@ -25,7 +26,7 @@ const TextLayer = ({ inView, canvasInitialized, textLayer, removeAnnotation }: P
               return null;
             }
 
-            const tokens = deburr(textLayerItem.text).match(tokenizer);
+            const tokens = tokenizeText(textLayerItem.text, tokenizer, needsTokenization);
             const filteredTokenLength = tokens.filter((t) => t !== ' ').length;
             offset += filteredTokenLength;
             return (
