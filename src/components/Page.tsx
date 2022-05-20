@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState, memo, useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport } from 'pdfjs-dist';
 import { mergeSplitWords } from '../helpers/pdfHelpers';
-import { Entity } from '../interfaces/entity';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 import { TextLayerItem, TextLayerType } from '../interfaces/textLayer';
 import useTesseract from '../hooks/useTesseract';
@@ -12,6 +11,8 @@ import OcrInfo from './OcrInfo';
 import Loader from './Loader';
 import TextLayer from './textLayer/TextLayer';
 import AreaLayer from './areaLayer/AreaLayer';
+import ConfigContext from '../context/configContext';
+import AnnotationContext from '../context/annotationContext';
 
 interface Props {
   pageNumber: number;

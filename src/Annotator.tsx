@@ -6,8 +6,9 @@ import React, {
   useCallback,
   useImperativeHandle,
   forwardRef,
-  Ref,
+  Ref, useRef,
 } from 'react';
+import hash from 'object-hash';
 import usePDF from './hooks/usePDF';
 import useAnnotations from './hooks/useAnnotations';
 import useTextMap from './hooks/useTextMap';
@@ -48,6 +49,7 @@ const Annotator = forwardRef(({
   getAnnotations,
   getTextMaps,
 }: Props, ref?: Ref<any>) => {
+  const lastAnnotationsHash = useRef('');
   const [scale, setScale] = useState(initialScale);
 
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders: config.httpHeaders });
@@ -68,8 +70,13 @@ const Annotator = forwardRef(({
   };
 
   useEffect(() => {
+    if (hash(annotations) === lastAnnotationsHash.current) {
+      return;
+    }
+
     if (getAnnotations) {
       getAnnotations(annotations);
+      lastAnnotationsHash.current = hash(annotations);
     }
   }, [annotations, getAnnotations]);
 
