@@ -6,4 +6,5 @@ export interface Config {
   readonly?: boolean;
   hideAnnotatingTooltips?: boolean;
   hideAnnotatingEntityVisualizations?: boolean;
+  hideAnnotateableBoxes?: boolean;
 }
