@@ -1,12 +1,16 @@
-import React  from 'react';
+import React, { memo, useContext, useMemo } from 'react';
+import EntityContext from '../../context/entityContext';
 
 interface Props {
-  isAnnotating: boolean;
   token: string;
   dataI?: number;
 }
 
-const Token = ({ isAnnotating, token, dataI }: Props) => {
+const Token = ({ token, dataI }: Props) => {
+  const { entity } = useContext(EntityContext);
+
+  const isAnnotating = useMemo(() => entity?.entityType === 'NER', [entity]);
+
   if (dataI) {
     return (
       <span
@@ -21,4 +25,4 @@ const Token = ({ isAnnotating, token, dataI }: Props) => {
   return <span className="token__text-item">{token}</span>;
 };
 
-export default Token;
+export default memo(Token);

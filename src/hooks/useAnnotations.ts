@@ -3,11 +3,11 @@ import hash from 'object-hash';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
 
 const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean) => {
-  const [annotations, setAnnotations] = useState<Array<Annotation>>(defaultAnnotations);
+  const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
 
   useEffect(() => {
     setAnnotations(defaultAnnotations);
-  }, [defaultAnnotations]);
+  }, [hash(defaultAnnotations)]);
 
   const getAnnotationsForPage = useCallback((page: number): Array<Annotation> => {
     return annotations.filter((annotation: Annotation) => annotation.page === page);

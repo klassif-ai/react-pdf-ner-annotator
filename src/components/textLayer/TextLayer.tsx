@@ -1,21 +1,20 @@
-import React from 'react';
+import React, { memo, useContext } from 'react';
 import deburr from 'lodash/deburr';
 import hash from 'object-hash';
 import { TextLayerItem } from '../../interfaces/textLayer';
 import TokenContainer from './TokenContainer';
-import { Annotation } from '../../interfaces/annotation';
+import AnnotationContext from '../../context/annotationContext';
 
 interface Props {
   inView: boolean;
   canvasInitialized: boolean;
-  isAnnotating: boolean;
   textLayer: Array<TextLayerItem>|null;
-  tokenizer: RegExp;
-  annotations: Array<Annotation>;
   removeAnnotation: (id: number) => void;
 }
 
-const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokenizer, annotations, removeAnnotation }: Props) => {
+const TextLayer = ({ inView, canvasInitialized, textLayer, removeAnnotation }: Props) => {
+  const { tokenizer } = useContext(AnnotationContext);
+
   if (inView && canvasInitialized && textLayer?.length) {
     let offset = 0;
     return (
@@ -32,11 +31,9 @@ const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokeniz
             return (
               <TokenContainer
                 key={hash(textLayerItem)}
-                isAnnotating={isAnnotating}
                 textLayerItem={textLayerItem}
                 tokens={tokens}
                 offset={offset - filteredTokenLength}
-                annotations={annotations}
                 removeAnnotation={removeAnnotation}
               />
             );
@@ -49,4 +46,4 @@ const TextLayer = ({ inView, canvasInitialized, isAnnotating, textLayer, tokeniz
   return null;
 };
 
-export default TextLayer;
+export default memo(TextLayer);

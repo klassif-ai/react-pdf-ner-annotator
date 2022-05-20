@@ -1,4 +1,5 @@
 import React, {
+  memo,
   useMemo,
   useState,
   useEffect,
@@ -18,6 +19,9 @@ import { Annotation } from './interfaces/annotation';
 import { TextLayer, TextLayerItem } from './interfaces/textLayer';
 import EntityVisualisation from './components/EntityVisualisation';
 import { Config } from './interfaces/config';
+import AnnotationContext from './context/annotationContext';
+import ConfigContext from './context/configContext';
+import EntityContext from './context/entityContext';
 
 interface Props {
   config?: Config;
@@ -121,40 +125,42 @@ const Annotator = forwardRef(({
   }
 
   return (
-    <div className="annotator-container" style={style}>
-      <EntityVisualisation hidden={config.hideAnnotatingEntityVisualizations} entity={entity} />
-      <div className="annotator-pages-container">
-        <div className="annotator-pages">
-          {Array(pages).fill(0).map((_, index) => {
-            const key = `pdf-page-${index}`;
-            const pageNumber = index + 1;
-            const page = fetchPage(pageNumber);
-            return (
-              <Page
-                page={page}
-                scale={scale}
-                key={key}
-                tokenizer={tokenizer}
-                disableOCR={config.disableOCR}
-                pageNumber={pageNumber}
-                annotations={getAnnotationsForPage(pageNumber)}
-                addAnnotation={addAnnotation}
-                updateLastAnnotationForEntity={updateLastAnnotationForEntity}
-                removeAnnotation={deleteAnnotation}
-                addPageToTextMap={addPageToTextMap}
-                entity={entity}
-                initialTextLayer={getTextLayerForPage(pageNumber)}
-                updateAnnotation={updateAnnotation}
-                hideAnnotatingTooltips={config.hideAnnotatingTooltips}
-              />
-            );
-          })}
+    <ConfigContext.Provider value={{ config }}>
+      <div className="annotator-container" style={style}>
+        <EntityVisualisation entity={entity} />
+        <div className="annotator-pages-container">
+          <EntityContext.Provider value={{ entity }}>
+            <AnnotationContext.Provider value={{ annotations, tokenizer }}>
+              <div className="annotator-pages">
+                {Array(pages).fill(0).map((_, index) => {
+                  const key = `pdf-page-${index}`;
+                  const pageNumber = index + 1;
+                  const page = fetchPage(pageNumber);
+                  return (
+                    <Page
+                      page={page}
+                      scale={scale}
+                      key={key}
+                      pageNumber={pageNumber}
+                      annotations={getAnnotationsForPage(pageNumber)}
+                      addAnnotation={addAnnotation}
+                      updateLastAnnotationForEntity={updateLastAnnotationForEntity}
+                      removeAnnotation={deleteAnnotation}
+                      addPageToTextMap={addPageToTextMap}
+                      initialTextLayer={getTextLayerForPage(pageNumber)}
+                      updateAnnotation={updateAnnotation}
+                    />
+                  );
+                })}
+              </div>
+            </AnnotationContext.Provider>
+          </EntityContext.Provider>
         </div>
+        <ButtonGroup scale={scale} setScale={setScale} />
       </div>
-      <ButtonGroup scale={scale} setScale={setScale} />
-    </div>
+    </ConfigContext.Provider>
   );
 });
 
-export default Annotator;
+export default memo(Annotator);
 

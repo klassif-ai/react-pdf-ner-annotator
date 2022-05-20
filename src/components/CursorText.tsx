@@ -1,20 +1,22 @@
-import React, { FC, useMemo, useRef } from 'react';
+import React, { FC, useContext, useMemo, useRef } from 'react';
 import { Entity } from '../interfaces/entity';
 import { Point } from '../interfaces/point';
+import ConfigContext from '../context/configContext';
 
 interface Props {
-  hidden: boolean;
   mouseCoords: Point;
   entity?: Entity;
 }
 
 const OFFSET = 15;
 
-const CursorText: FC<Props> = ({ hidden, entity, mouseCoords }) => {
+const CursorText: FC<Props> = ({ entity, mouseCoords }) => {
+  const { config } = useContext(ConfigContext);
+
   const ref = useRef(null);
 
   const style = useMemo(() => {
-    if (!entity || hidden || !ref.current) {
+    if (!entity || config.hideAnnotatingTooltips || !ref.current) {
       return {};
     }
 
@@ -23,9 +25,9 @@ const CursorText: FC<Props> = ({ hidden, entity, mouseCoords }) => {
       top: `${mouseCoords.y + OFFSET}px`,
       backgroundColor: entity.color,
     };
-  }, [entity, hidden, mouseCoords]);
+  }, [entity, config.hideAnnotatingTooltips, mouseCoords]);
 
-  if (!entity || hidden) {
+  if (!entity || config.hideAnnotatingTooltips) {
     return null;
   }
 

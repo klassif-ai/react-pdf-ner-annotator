@@ -1,15 +1,15 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback, Ref, forwardRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback, useContext } from 'react';
 import useMouse from '@react-hook/mouse-position';
 import { Rectangle } from 'tesseract.js';
 import { calculateSelectionRectangle, isCoordsEmpty } from '../helpers/selectionHelpers';
 import { AnnotationParams } from '../interfaces/annotation';
-import { Entity } from '../interfaces/entity';
 import { Point } from '../interfaces/point';
 import SelectionRectangle from './SelectionRectangle';
 import { buildAreaAnnotation, buildNerAnnotation } from '../helpers/annotationHelpers';
 import { PDFMetaData } from '../interfaces/pdf';
 import useKeyPressedListener from '../hooks/useKeyPressedListener';
 import CursorText from './CursorText';
+import EntityContext from '../context/entityContext';
 
 interface Props {
   pageNumber: number;
@@ -18,10 +18,8 @@ interface Props {
   updateLastAnnotationForEntity: (annotation: AnnotationParams) => void;
   className?: string;
   style?: {[key: string]: string};
-  entity?: Entity;
   pdfInformation: PDFMetaData;
   pdfContext: CanvasRenderingContext2D;
-  hideAnnotatingTooltips?: boolean;
 }
 
 const initialCoords: Rectangle = { left: 0, top: 0, width: 0, height: 0 };
@@ -33,10 +31,8 @@ const Selection = ({
   updateLastAnnotationForEntity,
   className,
   style,
-  entity,
   pdfInformation,
   pdfContext,
-  hideAnnotatingTooltips,
 }: Props) => {
   const selectionRef = useRef(null);
   const mouse = useMouse(selectionRef);
@@ -45,6 +41,8 @@ const Selection = ({
   const [isDragging, setIsDragging] = useState(false);
   const [mouseCoords, setMouseCoords] = useState<Point>({ x: 0, y: 0 });
   const [coords, setCoords] = useState(initialCoords);
+
+  const { entity } = useContext(EntityContext);
 
   const mode = useMemo(() => {
     if (entity && isDragging) {
@@ -136,7 +134,6 @@ const Selection = ({
       onMouseMove={handleMouseMove}
     >
       <CursorText
-        hidden={hideAnnotatingTooltips}
         entity={entity}
         mouseCoords={{ x: mouse?.x, y: mouse?.y }}
       />

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, memo } from 'react';
+import React, { useEffect, useRef, useState, memo, useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { PDFPageProxy, PDFPageViewport } from 'pdfjs-dist';
 import { mergeSplitWords } from '../helpers/pdfHelpers';
@@ -12,13 +12,13 @@ import OcrInfo from './OcrInfo';
 import Loader from './Loader';
 import TextLayer from './textLayer/TextLayer';
 import AreaLayer from './areaLayer/AreaLayer';
+import ConfigContext from '../context/configContext';
+import AnnotationContext from '../context/annotationContext';
 
 interface Props {
   pageNumber: number;
   page: Promise<PDFPageProxy>|null;
   scale: number;
-  tokenizer: RegExp;
-  disableOCR: boolean;
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
   updateAnnotation: (annotation: Annotation) => void;
@@ -31,27 +31,24 @@ interface Props {
     confidence: number,
     tokenizer?: RegExp,
   ) => void;
-  entity?: Entity;
   initialTextLayer?: Array<TextLayerItem>;
-  hideAnnotatingTooltips?: boolean;
 }
 
 const Page = ({
   pageNumber,
   page,
   scale,
-  tokenizer,
-  disableOCR,
   annotations,
   addAnnotation,
   updateAnnotation,
   updateLastAnnotationForEntity,
   removeAnnotation,
   addPageToTextMap,
-  entity,
   initialTextLayer,
-  hideAnnotatingTooltips,
 }: Props) => {
+  const { config: { disableOCR } } = useContext(ConfigContext);
+  const { tokenizer } = useContext(AnnotationContext);
+
   const [inViewRef, inView] = useInView({ threshold: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -149,20 +146,15 @@ const Page = ({
           pageNumber={pageNumber}
           className="page__text-layer-container"
           style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}
-          entity={entity}
           addAnnotation={addAnnotation}
           updateLastAnnotationForEntity={updateLastAnnotationForEntity}
           pdfInformation={{ width: pageViewport.width, height: pageViewport.height, scale }}
           pdfContext={context}
-          hideAnnotatingTooltips={hideAnnotatingTooltips}
         >
           <TextLayer
             inView={inView}
             canvasInitialized={!!canvasRef}
-            isAnnotating={entity?.entityType === 'NER'}
             textLayer={textLayer || ocrResult?.ocrWords}
-            tokenizer={tokenizer}
-            annotations={annotations.filter((annotation) => !!annotation.nerAnnotation)}
             removeAnnotation={removeAnnotation}
           />
           <AreaLayer

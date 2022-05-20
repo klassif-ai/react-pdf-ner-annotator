@@ -1,24 +1,26 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo, useContext } from 'react';
 import { TextLayerItem } from '../../interfaces/textLayer';
 import { getTextMetrics } from '../../helpers/textMapHelpers';
 import Token from './Token';
-import { Annotation } from '../../interfaces/annotation';
 import Mark from './Mark';
 import { isBetween } from '../../helpers/generalHelpers';
+import AnnotationContext from '../../context/annotationContext';
 
 interface Props {
-  isAnnotating: boolean;
   textLayerItem: TextLayerItem;
   tokens: Array<string>;
   offset: number;
-  annotations: Array<Annotation>;
   removeAnnotation: (id: number) => void;
 }
 
-const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotations, removeAnnotation }: Props) => {
+const TokenContainer = ({ textLayerItem, tokens, offset, removeAnnotation }: Props) => {
   let index = 0;
   let spaceAsMark = false;
   const { text, coords, fontSize, transform, fontFamily } = textLayerItem;
+
+  const context = useContext(AnnotationContext);
+
+  const annotations = useMemo(() => context.annotations.filter((annotation) => !!annotation.nerAnnotation), [context]);
 
   const metrics = useMemo(() => getTextMetrics(text), [text]);
   const scale = useMemo(() => ({
@@ -68,7 +70,6 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
             return (
               <Token
                 key={keyIndex}
-                isAnnotating={isAnnotating}
                 token={token}
               />
             );
@@ -86,7 +87,6 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
           return (
             <Token
               key={keyIndex}
-              isAnnotating={isAnnotating}
               token={token}
               dataI={dataI}
             />
@@ -97,4 +97,4 @@ const TokenContainer = ({ isAnnotating, textLayerItem, tokens, offset, annotatio
   );
 };
 
-export default TokenContainer;
+export default memo(TokenContainer);

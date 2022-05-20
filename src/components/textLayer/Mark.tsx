@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Annotation } from '../../interfaces/annotation';
 
 
@@ -23,4 +23,4 @@ const Mark = ({ token, annotation, removeAnnotation }: Props)  => {
   );
 };
 
-export default Mark;
+export default memo(Mark);

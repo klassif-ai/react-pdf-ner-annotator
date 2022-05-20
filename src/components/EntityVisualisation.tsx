@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Entity } from '../interfaces/entity';
+import ConfigContext from '../context/configContext';
 
 type Props = {
-  hidden?: boolean;
   entity?: Entity;
 };
 
-const EntityVisualisation = ({ hidden, entity }: Props) => {
-  if (!entity || hidden) {
+const EntityVisualisation = ({ entity }: Props) => {
+  const { config } = useContext(ConfigContext);
+
+  if (!entity || config.hideAnnotatingEntityVisualizations) {
     return null;
   }
 
