@@ -2,11 +2,11 @@ import { createContext } from 'react';
 import { Entity } from '../interfaces/entity';
 
 interface EntityContextProps {
-  entity?: Entity;
+	entity?: Entity;
 }
 
 const EntityContext = createContext<EntityContextProps>({
-  entity: undefined,
+	entity: undefined,
 });
 
 EntityContext.displayName = 'EntityContext';

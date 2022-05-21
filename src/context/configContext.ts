@@ -2,11 +2,11 @@ import { createContext } from 'react';
 import { Config } from '../interfaces/config';
 
 interface ConfigContextProps {
-  config: Config;
+	config: Config;
 }
 
 const ConfigContext = createContext<ConfigContextProps>({
-  config: {},
+	config: {},
 });
 
 ConfigContext.displayName = 'ConfigContext';

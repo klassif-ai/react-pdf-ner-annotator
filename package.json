@@ -21,7 +21,9 @@
     "build": "rimraf lib && tsc -p ./ --declaration --outDir lib/ && npm run sass-compile && npm run copy",
     "sass-compile": "node-sass  -r src/scss -o lib/css",
     "copy": "copyfiles -u 1 \"./src/**/*{.svg,scss,js}\" \"lib\"",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "lint": "eslint \"src/**/*{.ts,tsx}\" --fix",
+    "prettier": "prettier --write \"src/**/*{.ts,tsx}\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -53,22 +55,16 @@
     "babel-eslint": "10.1.0",
     "copyfiles": "^2.3.0",
     "eslint": "^7.11.0",
-    "eslint-config-airbnb": "18.2.0",
-    "eslint-config-airbnb-typescript": "9.0.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-config-react-app": "5.2.1",
-    "eslint-import-resolver-typescript": "2.2.0",
-    "eslint-loader": "4.0.2",
-    "eslint-plugin-flowtype": "5.2.0",
-    "eslint-plugin-import": "2.22.0",
-    "eslint-plugin-jsx-a11y": "6.3.1",
+    "eslint-plugin-flowtype": "^8.0.3",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-prettier": "3.1.4",
     "eslint-plugin-react": "7.20.5",
     "eslint-plugin-react-hooks": "4.0.8",
     "node-sass": "^4.14.1",
     "prettier": "2.0.5",
-    "prettier-eslint": "11.0.0",
-    "prettier-eslint-cli": "5.0.0",
     "typescript": "^3.7.5"
   },
   "peerDependencies": {

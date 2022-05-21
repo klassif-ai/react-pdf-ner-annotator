@@ -1,5 +1,5 @@
 export interface PDFMetaData {
-  width: number;
-  height: number;
-  scale: number;
+	width: number;
+	height: number;
+	scale: number;
 }

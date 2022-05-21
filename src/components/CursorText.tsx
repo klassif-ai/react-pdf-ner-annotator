@@ -4,34 +4,38 @@ import { Point } from '../interfaces/point';
 import ConfigContext from '../context/configContext';
 
 interface Props {
-  mouseCoords: Point;
-  entity?: Entity;
+	mouseCoords: Point;
+	entity?: Entity;
 }
 
 const OFFSET = 15;
 
 const CursorText: FC<Props> = ({ entity, mouseCoords }) => {
-  const { config } = useContext(ConfigContext);
+	const { config } = useContext(ConfigContext);
 
-  const ref = useRef(null);
+	const ref = useRef(null);
 
-  const style = useMemo(() => {
-    if (!entity || config.hideAnnotatingTooltips || !ref.current) {
-      return {};
-    }
+	const style = useMemo(() => {
+		if (!entity || config.hideAnnotatingTooltips || !ref.current) {
+			return {};
+		}
 
-    return {
-      left: `${mouseCoords.x + OFFSET}px`,
-      top: `${mouseCoords.y + OFFSET}px`,
-      backgroundColor: entity.color,
-    };
-  }, [entity, config.hideAnnotatingTooltips, mouseCoords]);
+		return {
+			left: `${mouseCoords.x + OFFSET}px`,
+			top: `${mouseCoords.y + OFFSET}px`,
+			backgroundColor: entity.color,
+		};
+	}, [entity, config.hideAnnotatingTooltips, mouseCoords]);
 
-  if (!entity || config.hideAnnotatingTooltips) {
-    return null;
-  }
+	if (!entity || config.hideAnnotatingTooltips) {
+		return null;
+	}
 
-  return <span className="cursor-text" ref={ref} style={style}>{entity.name}</span>;
+	return (
+		<span className="cursor-text" ref={ref} style={style}>
+			{entity.name}
+		</span>
+	);
 };
 
 export default CursorText;
