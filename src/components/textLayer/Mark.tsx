@@ -1,15 +1,17 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import { Annotation } from '../../interfaces/annotation';
+import AnnotationContext from '../../context/annotationContext';
 
 
 
 interface Props {
   token: string;
   annotation: Annotation;
-  removeAnnotation: (id: number) => void;
 }
 
-const Mark = ({ token, annotation, removeAnnotation }: Props)  => {
+const Mark = ({ token, annotation }: Props)  => {
+  const { removeAnnotation } = useContext(AnnotationContext);
+
   return (
     <mark
       className="mark-container"

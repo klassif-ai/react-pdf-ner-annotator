@@ -10,10 +10,10 @@ interface Props {
   canvasInitialized: boolean;
   textLayer: Array<TextLayerItem>|null;
   needsTokenization: boolean;
-  removeAnnotation: (id: number) => void;
+  pageNumber: number;
 }
 
-const TextLayer = ({ inView, canvasInitialized, textLayer, needsTokenization, removeAnnotation }: Props) => {
+const TextLayer = ({ inView, canvasInitialized, textLayer, needsTokenization, pageNumber }: Props) => {
   const { tokenizer } = useContext(AnnotationContext);
 
   if (inView && canvasInitialized && textLayer?.length) {
@@ -35,7 +35,7 @@ const TextLayer = ({ inView, canvasInitialized, textLayer, needsTokenization, re
                 textLayerItem={textLayerItem}
                 tokens={tokens}
                 offset={offset - filteredTokenLength}
-                removeAnnotation={removeAnnotation}
+                pageNumber={pageNumber}
               />
             );
           })

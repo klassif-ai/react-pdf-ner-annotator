@@ -104,7 +104,7 @@ const entities: Array<Entity> = [
 
 const App = () => {
   const [selectedEntity, setSelectedEntity] = useState(-1);
-  const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
+  const [annotations, setAnnotations] = useState<Array<Annotation>>(defaultAnnotations);
   const [textMap, setTextMap] = useState<any>([]);
   const childRef = useRef<AnnotatorHandle<typeof Annotator>>();
 
@@ -130,6 +130,9 @@ const App = () => {
               getAnnotations={setAnnotations}
               getTextMaps={setTextMap}
               ref={childRef}
+              config={{
+                shouldUpdateDefaultAnnotations: true,
+              }}
             />
           </div>
           <div className="app__content-entities">

@@ -10,17 +10,20 @@ interface Props {
   textLayerItem: TextLayerItem;
   tokens: Array<string>;
   offset: number;
-  removeAnnotation: (id: number) => void;
+  pageNumber: number;
 }
 
-const TokenContainer = ({ textLayerItem, tokens, offset, removeAnnotation }: Props) => {
+const TokenContainer = ({ textLayerItem, tokens, offset, pageNumber }: Props) => {
   let index = 0;
   let spaceAsMark = false;
   const { text, coords, fontSize, transform, fontFamily } = textLayerItem;
 
   const context = useContext(AnnotationContext);
 
-  const annotations = useMemo(() => context.annotations.filter((annotation) => !!annotation.nerAnnotation), [context]);
+  const annotations = useMemo(() => {
+    return context.annotations
+      .filter((annotation) => !!annotation.nerAnnotation && annotation.page === pageNumber);
+  }, [context, pageNumber]);
 
   const metrics = useMemo(() => getTextMetrics(text), [text]);
   const scale = useMemo(() => ({
@@ -64,7 +67,7 @@ const TokenContainer = ({ textLayerItem, tokens, offset, removeAnnotation }: Pro
             if (annotation && spaceAsMark && tokenIndexIsNotFirstOrLast) {
               spaceAsMark = false;
               return (
-                <Mark key={keyIndex} token={token} annotation={annotation} removeAnnotation={removeAnnotation} />
+                <Mark key={keyIndex} token={token} annotation={annotation} />
               );
             }
             return (
@@ -80,7 +83,7 @@ const TokenContainer = ({ textLayerItem, tokens, offset, removeAnnotation }: Pro
           if (annotation) {
             spaceAsMark = true;
             return (
-              <Mark key={keyIndex} token={token} annotation={annotation} removeAnnotation={removeAnnotation} />
+              <Mark key={keyIndex} token={token} annotation={annotation} />
             );
           }
 

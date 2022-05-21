@@ -20,9 +20,7 @@ interface Props {
   scale: number;
   annotations: Array<Annotation>;
   addAnnotation: (annotation: AnnotationParams) => void;
-  updateAnnotation: (annotation: Annotation) => void;
   updateLastAnnotationForEntity: (annotation: AnnotationParams) => void;
-  removeAnnotation: (id: number) => void;
   addPageToTextMap: (
     page: number,
     pdfTextLayer: Array<TextLayerItem>,
@@ -39,9 +37,7 @@ const Page = ({
   scale,
   annotations,
   addAnnotation,
-  updateAnnotation,
   updateLastAnnotationForEntity,
-  removeAnnotation,
   addPageToTextMap,
   initialTextLayer,
 }: Props) => {
@@ -154,14 +150,12 @@ const Page = ({
             inView={inView}
             canvasInitialized={!!canvasRef}
             textLayer={textLayer || ocrResult?.ocrWords}
-            removeAnnotation={removeAnnotation}
+            pageNumber={pageNumber}
             needsTokenization={!initialTextLayer}
           />
           <AreaLayer
             pdfScale={scale}
-            annotations={annotations.filter((annotation) => !!annotation.areaAnnotation)}
-            removeAnnotation={removeAnnotation}
-            updateAnnotation={updateAnnotation}
+            pageNumber={pageNumber}
           />
           <div className="ocr-info-container">
             <OcrInfo loading={ocrLoading} message={message} error={ocrError} />

@@ -7,4 +7,5 @@ export interface Config {
   hideAnnotatingTooltips?: boolean;
   hideAnnotatingEntityVisualizations?: boolean;
   hideAnnotateableBoxes?: boolean;
+  shouldUpdateDefaultAnnotations?: boolean;
 }

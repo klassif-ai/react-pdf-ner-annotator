@@ -23,6 +23,7 @@ import { Config } from './interfaces/config';
 import AnnotationContext from './context/annotationContext';
 import ConfigContext from './context/configContext';
 import EntityContext from './context/entityContext';
+import useAnnotationUpdater from './hooks/useAnnotationUpdater';
 
 interface Props {
   config?: Config;
@@ -49,7 +50,6 @@ const Annotator = forwardRef(({
   getAnnotations,
   getTextMaps,
 }: Props, ref?: Ref<any>) => {
-  const lastAnnotationsHash = useRef('');
   const [scale, setScale] = useState(initialScale);
 
   const { pages, error, fetchPage } = usePDF({ url, data, httpHeaders: config.httpHeaders });
@@ -59,26 +59,18 @@ const Annotator = forwardRef(({
     addAnnotation,
     updateAnnotation,
     updateLastAnnotationForEntity,
-    removeAnnotation: deleteAnnotation
-  } = useAnnotations(defaultAnnotations, config.readonly);
+    removeAnnotation: deleteAnnotation,
+    lastActionHash
+  } = useAnnotations(defaultAnnotations, config.readonly, config.shouldUpdateDefaultAnnotations);
   const { textMap, addPageToTextMap } = useTextMap(annotations);
+
+  useAnnotationUpdater(lastActionHash, annotations, config.readonly, getAnnotations);
 
   useImperativeHandle(ref, () => ({ removeAnnotation }));
 
   const removeAnnotation = (id: number) => {
     deleteAnnotation(id);
   };
-
-  useEffect(() => {
-    if (hash(annotations) === lastAnnotationsHash.current) {
-      return;
-    }
-
-    if (getAnnotations) {
-      getAnnotations(annotations);
-      lastAnnotationsHash.current = hash(annotations);
-    }
-  }, [annotations, getAnnotations]);
 
   useEffect(() => {
     if (getTextMaps) {
@@ -137,7 +129,7 @@ const Annotator = forwardRef(({
         <EntityVisualisation entity={entity} />
         <div className="annotator-pages-container">
           <EntityContext.Provider value={{ entity }}>
-            <AnnotationContext.Provider value={{ annotations, tokenizer }}>
+            <AnnotationContext.Provider value={{ annotations, removeAnnotation, updateAnnotation, tokenizer }}>
               <div className="annotator-pages">
                 {Array(pages).fill(0).map((_, index) => {
                   const key = `pdf-page-${index}`;
@@ -152,10 +144,8 @@ const Annotator = forwardRef(({
                       annotations={getAnnotationsForPage(pageNumber)}
                       addAnnotation={addAnnotation}
                       updateLastAnnotationForEntity={updateLastAnnotationForEntity}
-                      removeAnnotation={deleteAnnotation}
                       addPageToTextMap={addPageToTextMap}
                       initialTextLayer={getTextLayerForPage(pageNumber)}
-                      updateAnnotation={updateAnnotation}
                     />
                   );
                 })}

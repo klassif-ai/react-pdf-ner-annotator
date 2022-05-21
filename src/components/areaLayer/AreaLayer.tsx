@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import AreaMark from './AreaMark';
-import { Annotation } from '../../interfaces/annotation';
+import AnnotationContext from '../../context/annotationContext';
 
 interface Props {
   pdfScale: number;
-  annotations: Array<Annotation>;
-  removeAnnotation: (id: number) => void;
-  updateAnnotation: (annotation: Annotation) => void;
+  pageNumber: number;
 }
 
-const AreaLayer = ({ pdfScale, annotations, removeAnnotation, updateAnnotation }: Props) => {
+const AreaLayer = ({ pdfScale, pageNumber }: Props) => {
+  const context = useContext(AnnotationContext);
+
+  const annotations = useMemo(() => {
+    return context.annotations
+      .filter((annotation) => !!annotation.areaAnnotation && annotation.page === pageNumber);
+  }, [context, pageNumber]);
+
   return (
     <>
       {
@@ -18,8 +23,8 @@ const AreaLayer = ({ pdfScale, annotations, removeAnnotation, updateAnnotation }
             pdfScale={pdfScale}
             key={annotation.id}
             annotation={annotation}
-            removeAnnotation={removeAnnotation}
-            updateAnnotation={updateAnnotation}
+            removeAnnotation={context.removeAnnotation}
+            updateAnnotation={context.updateAnnotation}
           />
         ))
       }

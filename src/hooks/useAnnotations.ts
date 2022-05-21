@@ -1,13 +1,17 @@
 import { useState, useCallback, useEffect } from 'react';
 import hash from 'object-hash';
 import { Annotation, AnnotationParams } from '../interfaces/annotation';
+import { generateRandomHash } from '../helpers/hashHelper';
 
-const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean) => {
+const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean, shouldUpdateDefaultAnnotations: boolean) => {
   const [annotations, setAnnotations] = useState<Array<Annotation>>([]);
+  const [lastActionHash, setLastActionHash] = useState<string>('');
 
   useEffect(() => {
-    setAnnotations(defaultAnnotations);
-  }, [hash(defaultAnnotations)]);
+    if (shouldUpdateDefaultAnnotations) {
+      setAnnotations(defaultAnnotations);
+    }
+  }, [hash(defaultAnnotations), shouldUpdateDefaultAnnotations]);
 
   const getAnnotationsForPage = useCallback((page: number): Array<Annotation> => {
     return annotations.filter((annotation: Annotation) => annotation.page === page);
@@ -18,31 +22,30 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
       return;
     }
 
-    const lastId = annotations[annotations.length - 1]?.id || 0;
-    const newAnnotation: Annotation = {
-      id: lastId + 1,
-      hash: hash({
-        annotation,
-        dateTime: new Date().toLocaleString(),
-      }),
-      ...annotation,
-    };
-    const newAnnotations = [...annotations, newAnnotation];
-    setAnnotations(newAnnotations);
-  }, [annotations, readonly]);
+    setAnnotations((prevAnnotations) => {
+      const lastId = prevAnnotations[prevAnnotations.length - 1]?.id || 0;
+      const newAnnotation: Annotation = {
+        id: lastId + 1,
+        ...annotation,
+      };
+      return [...prevAnnotations, newAnnotation];
+    });
+    setLastActionHash(generateRandomHash());
+  }, [readonly]);
 
   const updateAnnotation = useCallback((annotation: Annotation) => {
     if (readonly) {
       return;
     }
 
-    const indexToUpdate = annotations.findIndex(x => x.id === annotation.id);
-    if (indexToUpdate !== -1) {
-      const updatedAnnotations = [...annotations];
-      updatedAnnotations[indexToUpdate] = annotation;
-      setAnnotations(updatedAnnotations);
-    }
-  }, [annotations, readonly]);
+    setAnnotations((prevAnnotations) => prevAnnotations.map((prevAnnotation) => {
+      if (prevAnnotation.id === annotation.id) {
+        return annotation;
+      }
+      return prevAnnotation;
+    }));
+    setLastActionHash(generateRandomHash());
+  }, [readonly]);
 
   const updateLastAnnotationForEntity = useCallback((annotation: AnnotationParams) => {
     if (readonly) {
@@ -73,6 +76,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     } else {
       addAnnotation(annotation);
     }
+    setLastActionHash(generateRandomHash());
   }, [addAnnotation, annotations, readonly]);
 
   const removeAnnotation = useCallback((id: number) => {
@@ -80,11 +84,9 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
       return;
     }
 
-    const index = annotations.findIndex(a => a.id === id);
-    if (index !== -1) {
-      setAnnotations(annotations.filter((_, i) => i !== index));
-    }
-  }, [annotations, readonly]);
+    setAnnotations((prevAnnotations) => prevAnnotations.filter(a => a.id !== id));
+    setLastActionHash(generateRandomHash());
+  }, [readonly]);
 
   return {
     annotations,
@@ -93,6 +95,7 @@ const useAnnotations = (defaultAnnotations: Array<Annotation>, readonly: boolean
     updateAnnotation,
     updateLastAnnotationForEntity,
     removeAnnotation,
+    lastActionHash,
   };
 };
 
