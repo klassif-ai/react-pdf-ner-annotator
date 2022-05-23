@@ -7,14 +7,19 @@ import { tokenizeText } from '../../helpers/textMapHelpers';
 
 interface Props {
 	inView: boolean;
+	shouldRender: boolean;
 	canvasInitialized: boolean;
 	textLayer: Array<TextLayerItem> | null;
 	needsTokenization: boolean;
 	pageNumber: number;
 }
 
-const TextLayer = ({ inView, canvasInitialized, textLayer, needsTokenization, pageNumber }: Props) => {
+const TextLayer = ({ inView, shouldRender, canvasInitialized, textLayer, needsTokenization, pageNumber }: Props) => {
 	const { tokenizer } = useContext(AnnotationContext);
+
+	if (!shouldRender) {
+		return null;
+	}
 
 	if (inView && canvasInitialized && textLayer?.length) {
 		let offset = 0;

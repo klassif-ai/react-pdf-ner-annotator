@@ -19,4 +19,5 @@ export interface TextLayer {
 	textMapItems: Array<TextLayerItem>;
 	type: TextLayerType;
 	confidence: number;
+	shouldRender?: boolean;
 }

@@ -95,12 +95,13 @@ const Annotator = forwardRef(
 		}, [entity, config]);
 
 		const getTextLayerForPage = useCallback(
-			(page: number): Array<TextLayerItem> | undefined => {
+			(page: number): [Array<TextLayerItem>, boolean] | [undefined, boolean] => {
 				if (initialTextMap) {
 					const found = initialTextMap.find((layer) => layer.page === page);
-					return found ? found.textMapItems : undefined;
+					const shouldRender = found.shouldRender !== undefined ? found.shouldRender : true;
+					return found ? [found.textMapItems, shouldRender] : [undefined, true];
 				}
-				return undefined;
+				return [undefined, true];
 			},
 			[initialTextMap],
 		);
@@ -135,7 +136,12 @@ const Annotator = forwardRef(
 					<EntityVisualisation entity={entity} />
 					<div className="annotator-pages-container">
 						<EntityContext.Provider value={{ entity }}>
-							<AnnotationContext.Provider value={{ annotations, removeAnnotation, updateAnnotation, tokenizer }}>
+							<AnnotationContext.Provider value={{
+								annotations,
+								removeAnnotation,
+								updateAnnotation,
+								tokenizer
+							}}>
 								<div className="annotator-pages">
 									{Array(pages)
 										.fill(0)
@@ -143,8 +149,10 @@ const Annotator = forwardRef(
 											const key = `pdf-page-${index}`;
 											const pageNumber = index + 1;
 											const page = fetchPage(pageNumber);
+											const [initialTextLayer, shouldRender] = getTextLayerForPage(pageNumber);
 											return (
 												<Page
+													shouldRender={shouldRender}
 													page={page}
 													scale={scale}
 													key={key}
@@ -153,7 +161,7 @@ const Annotator = forwardRef(
 													addAnnotation={addAnnotation}
 													updateLastAnnotationForEntity={updateLastAnnotationForEntity}
 													addPageToTextMap={addPageToTextMap}
-													initialTextLayer={getTextLayerForPage(pageNumber)}
+													initialTextLayer={initialTextLayer}
 												/>
 											);
 										})}

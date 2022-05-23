@@ -16,6 +16,7 @@ import AnnotationContext from '../context/annotationContext';
 
 interface Props {
 	pageNumber: number;
+	shouldRender: boolean;
 	page: Promise<PDFPageProxy> | null;
 	scale: number;
 	annotations: Array<Annotation>;
@@ -33,6 +34,7 @@ interface Props {
 
 const Page = ({
 	pageNumber,
+	shouldRender,
 	page,
 	scale,
 	annotations,
@@ -146,6 +148,7 @@ const Page = ({
 				>
 					<TextLayer
 						inView={inView}
+						shouldRender={shouldRender}
 						canvasInitialized={!!canvasRef}
 						textLayer={textLayer || ocrResult?.ocrWords}
 						pageNumber={pageNumber}
