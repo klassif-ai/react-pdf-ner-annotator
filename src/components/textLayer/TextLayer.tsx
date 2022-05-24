@@ -31,6 +31,11 @@ const TextLayer = ({ inView, shouldRender, canvasInitialized, textLayer, needsTo
 					}
 
 					const tokens = tokenizeText(textLayerItem.text, tokenizer, needsTokenization);
+
+					if (!tokens) {
+						return null;
+					}
+
 					const filteredTokenLength = tokens.filter((t) => t !== ' ').length;
 					offset += filteredTokenLength;
 					return (
