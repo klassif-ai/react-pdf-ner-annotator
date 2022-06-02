@@ -27,7 +27,7 @@ export const buildTextMapFromTextLayer = (
 						text: token,
 						coords: {
 							left: offset + coords.left,
-							top: coords.height,
+							top: coords.top,
 							width: textWidth,
 							height: coords.height,
 						},
