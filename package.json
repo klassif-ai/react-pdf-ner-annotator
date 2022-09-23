@@ -9,6 +9,7 @@
   "types": "./lib/index.d.ts",
   "dependencies": {
     "@react-hook/mouse-position": "^4.1.0",
+    "bootstrap-icons": "^1.8.3",
     "lodash": "^4.17.20",
     "object-hash": "^2.2.0",
     "pdfjs-dist": "2.4.456",

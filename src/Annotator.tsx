@@ -1,13 +1,4 @@
-import React, {
-	memo,
-	useMemo,
-	useState,
-	useEffect,
-	useCallback,
-	useImperativeHandle,
-	forwardRef,
-	Ref,
-} from 'react';
+import React, { memo, useMemo, useState, useEffect, useCallback, useImperativeHandle, forwardRef, Ref } from 'react';
 import usePDF from './hooks/usePDF';
 import useAnnotations from './hooks/useAnnotations';
 import useTextMap from './hooks/useTextMap';
@@ -23,6 +14,8 @@ import AnnotationContext from './context/annotationContext';
 import ConfigContext from './context/configContext';
 import EntityContext from './context/entityContext';
 import useAnnotationUpdater from './hooks/useAnnotationUpdater';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import TableBuilder from './components/tableBuilder/TableBuilder';
 
 interface Props {
 	config?: Config;
@@ -136,12 +129,14 @@ const Annotator = forwardRef(
 					<EntityVisualisation entity={entity} />
 					<div className="annotator-pages-container">
 						<EntityContext.Provider value={{ entity }}>
-							<AnnotationContext.Provider value={{
-								annotations,
-								removeAnnotation,
-								updateAnnotation,
-								tokenizer
-							}}>
+							<AnnotationContext.Provider
+								value={{
+									annotations,
+									removeAnnotation,
+									updateAnnotation,
+									tokenizer,
+								}}
+							>
 								<div className="annotator-pages">
 									{Array(pages)
 										.fill(0)

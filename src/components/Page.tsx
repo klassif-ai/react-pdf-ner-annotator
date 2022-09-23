@@ -13,6 +13,7 @@ import TextLayer from './textLayer/TextLayer';
 import AreaLayer from './areaLayer/AreaLayer';
 import ConfigContext from '../context/configContext';
 import AnnotationContext from '../context/annotationContext';
+import TableBuilder from './tableBuilder/TableBuilder';
 
 interface Props {
 	pageNumber: number;
@@ -130,6 +131,7 @@ const Page = ({
 	return (
 		<div className="page" ref={inViewRef}>
 			<div className="page__container" style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}>
+				<TableBuilder />
 				<div
 					className="page__canvas-container"
 					style={{ width: `${pageViewport.width}px`, height: `${pageViewport.height}px` }}

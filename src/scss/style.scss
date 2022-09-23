@@ -76,8 +76,7 @@
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 
         .fab-group__button-icon {
-          width: 20px;
-          height: 20px;
+          font-weight: bold;
         }
 
         &:hover {
@@ -385,6 +384,28 @@
           opacity: 0.2;
         }
       }
+    }
+  }
+}
+
+.table-builder__container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  .table-builder__border {
+    position: absolute;
+    z-index: 1000;
+  }
+
+  .table-builder__table {
+    position: absolute;
+    border: 5px solid grey;
+
+    .table-builder__column {
+      position: absolute;
+      border: 2px solid grey;
+      top: 0;
     }
   }
 }
