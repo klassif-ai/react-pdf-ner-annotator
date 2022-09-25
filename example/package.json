@@ -20,16 +20,19 @@
     ]
   },
   "dependencies": {
-    "@types/react-json-tree": "^0.6.11",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-json-tree": "^0.12.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-json-tree": "^0.17.0",
+    "react-router-dom": "^6.4.1",
     "react-pdf-ner-annotator": "file:..",
-    "react-scripts": "4.0.1"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom"
+  },
+  "devDependencies": {
+    "@types/react-json-tree": "^0.13.0"
   }
 }

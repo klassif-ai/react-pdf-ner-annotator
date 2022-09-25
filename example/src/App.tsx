@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import JSONTree from 'react-json-tree';
+import { JSONTree } from 'react-json-tree';
 import Annotator from 'react-pdf-ner-annotator';
 import { Entity } from 'react-pdf-ner-annotator/src/interfaces/entity';
 import { Annotation } from 'react-pdf-ner-annotator/src/interfaces/annotation';
