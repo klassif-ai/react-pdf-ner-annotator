@@ -26,7 +26,7 @@ const TextLayer = ({ inView, shouldRender, canvasInitialized, textLayer, needsTo
 		return (
 			<>
 				{textLayer.map((textLayerItem) => {
-					if (!textLayerItem.text?.replace(/\s/g,"")) {
+					if (!textLayerItem.text?.replace(/\s/g, '')) {
 						return null;
 					}
 
