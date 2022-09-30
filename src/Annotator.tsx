@@ -5,7 +5,7 @@ import useTextMap from './hooks/useTextMap';
 import Page from './components/Page';
 import Error from './components/Error';
 import ButtonGroup from './components/ButtonGroup';
-import { Entity } from './interfaces/entity';
+import { Entity, IEntityHover } from './interfaces/entity';
 import { Annotation } from './interfaces/annotation';
 import { TextLayer, TextLayerItem } from './interfaces/textLayer';
 import EntityVisualisation from './components/EntityVisualisation';
@@ -24,6 +24,7 @@ interface Props {
 	entity?: Entity;
 	initialTextMap?: Array<TextLayer>;
 	defaultAnnotations?: Array<Annotation>;
+	hoveredEntities?: Array<IEntityHover>;
 	getAnnotations(annotations: Array<Annotation>): void;
 	getTextMaps?(textMaps: Array<TextLayer>): void;
 }
@@ -39,6 +40,7 @@ const Annotator = forwardRef(
 			entity,
 			initialTextMap,
 			defaultAnnotations = [],
+			hoveredEntities,
 			getAnnotations,
 			getTextMaps,
 		}: Props,
@@ -133,6 +135,7 @@ const Annotator = forwardRef(
 									removeAnnotation,
 									updateAnnotation,
 									tokenizer,
+									hoveredEntities,
 								}}
 							>
 								<div className="annotator-pages">

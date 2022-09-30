@@ -23,9 +23,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-json-tree": "^0.17.0",
-    "react-router-dom": "^6.4.1",
     "react-pdf-ner-annotator": "file:..",
-    "react-scripts": "^5.0.1"
+    "react-router-dom": "^6.4.1",
+    "react-scripts": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

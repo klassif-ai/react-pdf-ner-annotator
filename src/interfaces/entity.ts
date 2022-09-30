@@ -8,3 +8,8 @@ export interface Entity {
 	regex?: RegExp;
 	index?: number;
 }
+
+export interface IEntityHover {
+	id: number;
+	index?: number;
+}

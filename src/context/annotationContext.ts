@@ -1,11 +1,13 @@
 import { createContext } from 'react';
 import { Annotation } from '../interfaces/annotation';
+import { IEntityHover } from '../interfaces/entity';
 
 interface AnnotationContextProps {
 	annotations: Array<Annotation>;
 	removeAnnotation: (id: number) => void;
 	updateAnnotation: (annotation: Annotation) => void;
 	tokenizer: RegExp;
+	hoveredEntities?: Array<IEntityHover>;
 }
 
 const AnnotationContext = createContext<AnnotationContextProps>({

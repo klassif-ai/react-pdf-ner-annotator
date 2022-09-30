@@ -1,6 +1,6 @@
 {
   "name": "react-pdf-ner-annotator",
-  "version": "3.1.6",
+  "version": "3.3.1",
   "private": false,
   "files": [
     "lib"
@@ -16,7 +16,7 @@
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.4.0",
     "react-router-dom": "^6.4.1",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "^4.0.1",
     "tesseract.js": "^3.0.3"
   },
   "scripts": {
@@ -69,7 +69,7 @@
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "copyfiles": "^2.4.1",
-    "eslint": "^8.24.0",
+    "eslint": "^7.11.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",

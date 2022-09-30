@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { JSONTree } from 'react-json-tree';
 import Annotator from 'react-pdf-ner-annotator';
-import { Entity } from 'react-pdf-ner-annotator/src/interfaces/entity';
+import { Entity, IEntityHover } from 'react-pdf-ner-annotator/src/interfaces/entity';
 import { Annotation } from 'react-pdf-ner-annotator/src/interfaces/annotation';
 import { AnnotatorHandle } from 'react-pdf-ner-annotator/src/types';
 import PDFFile from './pdfs/order.pdf';
@@ -106,7 +106,16 @@ const App = () => {
   const [selectedEntity, setSelectedEntity] = useState(-1);
   const [annotations, setAnnotations] = useState<Array<Annotation>>(defaultAnnotations);
   const [textMap, setTextMap] = useState<any>([]);
+  const [hoveredEntities, setHoveredEntities] = useState<Array<IEntityHover>>([]);
   const childRef = useRef<AnnotatorHandle<typeof Annotator>>();
+
+  const handleEnter = (entityId: number) => {
+    setHoveredEntities((prev) => [...prev, { id: entityId }]);
+  };
+
+  const handleLeave = (entityId: number) => {
+    setHoveredEntities((prev) => [...prev].filter((entity) => entity.id !== entityId));
+  }
 
   return (
     <div className="app-container">
@@ -127,6 +136,7 @@ const App = () => {
               data={PDFFile}
               defaultAnnotations={defaultAnnotations}
               entity={entities[selectedEntity]}
+              hoveredEntities={hoveredEntities}
               getAnnotations={setAnnotations}
               getTextMaps={setTextMap}
               ref={childRef}
@@ -139,7 +149,12 @@ const App = () => {
             <h1>Entities</h1>
             {
               entities.map((entity, index) => (
-                <div className="entity-container" key={entity.id}>
+                <div
+                  className="entity-container"
+                  key={entity.id}
+                  onMouseEnter={() => handleEnter(entity.id)}
+                  onMouseLeave={() => handleLeave(entity.id)}
+                >
                   <span className="entity__hotkey">
                     {index + 1}
                   </span>
