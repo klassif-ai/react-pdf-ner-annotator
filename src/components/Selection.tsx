@@ -57,7 +57,7 @@ const Selection = ({
 
 	const handleKeyEvent = useCallback(
 		(event: KeyboardEvent) => {
-			if (event.key.toLowerCase() === 'escape' && isDragging) {
+			if (event?.key?.toLowerCase() === 'escape' && isDragging) {
 				setIsDragging(false);
 				setMouseCoords({ x: 0, y: 0 });
 				setCoords(initialCoords);

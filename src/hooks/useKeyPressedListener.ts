@@ -13,7 +13,7 @@ const useKeyPressedListener = (targetKey = 'CONTROL') => {
 
 	const downHandler = useCallback(
 		({ key }) => {
-			if (getTargetKeys().includes(key.toUpperCase())) {
+			if (getTargetKeys().includes(key?.toUpperCase())) {
 				setKeyPressed(true);
 			}
 		},
@@ -22,7 +22,7 @@ const useKeyPressedListener = (targetKey = 'CONTROL') => {
 
 	const upHandler = useCallback(
 		({ key }) => {
-			if (getTargetKeys().includes(key.toUpperCase())) {
+			if (getTargetKeys().includes(key?.toUpperCase())) {
 				setKeyPressed(false);
 			}
 		},
