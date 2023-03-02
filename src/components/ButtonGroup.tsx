@@ -10,7 +10,7 @@ interface Props {
 const ButtonGroup = ({ scale, setScale }: Props) => {
 	const incrementScale = (increment: number) => {
 		const newScale = Math.round((scale + increment) * 10) / 10;
-		if (newScale <= 2 && newScale >= 1) {
+		if (newScale <= 5.0 && newScale >= 0.5) {
 			setScale(newScale);
 		}
 	};
