@@ -11,10 +11,10 @@ import {
 
 const useTextLayer = (scale: number, context: CanvasRenderingContext2D, initialTextLayer?: Array<TextLayerItem>) => {
 	const [textLayer, setTextLayer] = useState<Array<TextLayerItem> | null>(initialTextLayer || null);
-	const [baseScale, setBaseScale] = useState(scale);
+	const [baseScale, setBaseScale] = useState(1.5);
 
 	useEffect(() => {
-		if (textLayer && baseScale !== scale) {
+		if (textLayer && context && baseScale !== scale) {
 			const rescaledWords = textLayer.map((word) => {
 				const coords = recalculateBoundingBox(word.coords, baseScale, scale);
 				const fontSize = calculateFontSize(coords.width, coords.height, word.text);
