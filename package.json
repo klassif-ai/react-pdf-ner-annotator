@@ -1,6 +1,6 @@
 {
   "name": "react-pdf-ner-annotator",
-  "version": "3.3.2",
+  "version": "3.4.1",
   "private": false,
   "files": [
     "lib"
